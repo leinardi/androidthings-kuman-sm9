@@ -1,0 +1,44 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.leinardi.android.checkstyle'
+
+checkstyle {
+    ignoreFailures = true // Whether this task will ignore failures and continue running the build.
+    configFile rootProject.file('config/checkstyle/checkstyle.xml') // The Checkstyle configuration file to use.
+    toolVersion = '8.4' // The version of Checkstyle you want to be used
+}
+
+android {
+    compileSdkVersion COMPILE_SDK_VERSION as int
+    buildToolsVersion BUILD_TOOLS_VERSION as String
+
+    defaultConfig {
+        minSdkVersion MIN_SDK_VERSION as int
+        targetSdkVersion TARGET_SDK_VERSION as int
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    compileOnly 'com.google.android.things:androidthings:0.5.1-devpreview'
+    implementation 'com.android.support:support-annotations:27.0.1'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+}
