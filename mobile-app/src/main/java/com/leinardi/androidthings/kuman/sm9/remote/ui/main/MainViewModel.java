@@ -1,4 +1,4 @@
-package com.leinardi.androidthings.kuman.sm9.remote.ui;
+package com.leinardi.androidthings.kuman.sm9.remote.ui.main;
 
 import com.erz.joysticklibrary.JoyStick;
 import com.leinardi.androidthings.kuman.sm9.common.ui.BaseViewModel;
@@ -10,6 +10,7 @@ import timber.log.Timber;
 import javax.inject.Inject;
 
 public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
+    private static final int POWER_THRESHOLD = 33; // 33 percent
     private GoogleApiClientRepository mGoogleApiClientRepository;
 
     @Inject
@@ -42,9 +43,13 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
         mGoogleApiClientRepository.clear();
     }
 
+    public void onReconnectClicked() {
+        mGoogleApiClientRepository.connect();
+    }
+
     public void setPermissionsGranted(boolean permissionsGranted) {
         if (permissionsGranted && !getObservable().getPermissionsGranted()) {
-            mGoogleApiClientRepository.connectGoogleApiClient();
+            mGoogleApiClientRepository.connect();
         }
         getObservable().setPermissionsGranted(permissionsGranted);
     }
@@ -55,7 +60,7 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
 
             @Override
             public void onMove(JoyStick joyStick, double angle, double power, int direction) {
-                if (direction != mDirection) {
+                if (direction != mDirection && (direction == JoyStick.DIRECTION_CENTER || power > POWER_THRESHOLD)) {
                     mGoogleApiClientRepository.sendMessage("Direction " + direction);
                     mDirection = direction;
                 }

@@ -1,4 +1,4 @@
-package com.leinardi.androidthings.kuman.sm9.remote.ui;
+package com.leinardi.androidthings.kuman.sm9.remote.ui.main;
 
 import android.Manifest;
 import android.content.pm.PackageManager;

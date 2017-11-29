@@ -16,7 +16,7 @@
 
 package com.leinardi.androidthings.kuman.sm9.remote.di;
 
-import com.leinardi.androidthings.kuman.sm9.remote.ui.MainActivity;
+import com.leinardi.androidthings.kuman.sm9.remote.ui.main.MainActivity;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 

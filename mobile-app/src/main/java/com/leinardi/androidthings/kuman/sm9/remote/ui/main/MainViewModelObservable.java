@@ -1,23 +1,18 @@
-package com.leinardi.androidthings.kuman.sm9.remote.ui;
+package com.leinardi.androidthings.kuman.sm9.remote.ui.main;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import android.support.annotation.IntDef;
 
 import com.leinardi.androidthings.kuman.sm9.remote.BR;
-import com.leinardi.androidthings.kuman.sm9.remote.R;
+import com.leinardi.androidthings.kuman.sm9.remote.api.GoogleApiClientRepository;
 
 import javax.inject.Inject;
-
-import static com.leinardi.androidthings.kuman.sm9.remote.ui.MainViewModelObservable.ConnectionStatus.CONNECTED;
-import static com.leinardi.androidthings.kuman.sm9.remote.ui.MainViewModelObservable.ConnectionStatus.CONNECTING;
-import static com.leinardi.androidthings.kuman.sm9.remote.ui.MainViewModelObservable.ConnectionStatus.DISCONNECTED;
 
 public class MainViewModelObservable extends BaseObservable {
 
     private boolean mPermissionsGranted;
     private CharSequence mConnectionInfo;
-    @ConnectionStatus
+    @GoogleApiClientRepository.ConnectionStatus
     private int mConnectionStatus;
 
     @Inject
@@ -52,13 +47,6 @@ public class MainViewModelObservable extends BaseObservable {
     public void setConnectionStatus(int connectionStatus) {
         mConnectionStatus = connectionStatus;
         notifyPropertyChanged(BR.connectionStatus);
-    }
-
-    @IntDef({DISCONNECTED, CONNECTING, CONNECTED})
-    public @interface ConnectionStatus {
-        int DISCONNECTED = R.drawable.ic_disconnected;
-        int CONNECTING = R.drawable.ic_connecting;
-        int CONNECTED = R.drawable.ic_connected;
     }
 
 }

@@ -19,52 +19,24 @@ package com.leinardi.androidthings.kuman.sm9.ui;
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.leinardi.androidthings.kuman.sm9.api.GoogleApiClientRepository;
 import com.leinardi.androidthings.kuman.sm9.common.di.Injectable;
 import timber.log.Timber;
 
 import javax.inject.Inject;
 
-/**
- * Skeleton of the main Android Things activity. Implement your device's logic
- * in this class.
- * <p>
- * Android Things peripheral APIs are accessible through the class
- * PeripheralManagerService. For example, the snippet below will open a GPIO pin and
- * set it to HIGH:
- * <p>
- * <pre>{@code
- * PeripheralManagerService service = new PeripheralManagerService();
- * mLedGpio = service.openGpio("BCM6");
- * mLedGpio.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
- * mLedGpio.setValue(true);
- * }</pre>
- * <p>
- * For more complex peripherals, look for an existing user-space driver, or implement one if none
- * is available.
- */
 public class MainActivity extends Activity implements Injectable {
     @Inject
-    GoogleApiClientRepository mGoogleApiClientRepository;
-    //    private PwrA53A mPwrA53A;
+    MainController mMainController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.d("onCreate");
-
-        //        try {
-        //            mPwrA53A = new PwrA53A();
-        //        } catch (IOException e) {
-        //            Timber.e(e);
-        //        }
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Timber.d("onDestroy");
-        mGoogleApiClientRepository.clear();
     }
 }

@@ -4,7 +4,7 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
 import com.leinardi.androidthings.kuman.sm9.common.ui.ViewModelFactory;
-import com.leinardi.androidthings.kuman.sm9.remote.ui.MainViewModel;
+import com.leinardi.androidthings.kuman.sm9.remote.ui.main.MainViewModel;
 import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoMap;

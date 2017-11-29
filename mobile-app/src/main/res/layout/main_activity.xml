@@ -7,15 +7,17 @@
 
         <import type="com.erz.joysticklibrary.JoyStick" />
 
+        <import type="com.leinardi.androidthings.kuman.sm9.remote.api.GoogleApiClientRepository.ConnectionStatus" />
+
         <variable
             name="viewModel"
-            type="com.leinardi.androidthings.kuman.sm9.remote.ui.MainViewModel" />
+            type="com.leinardi.androidthings.kuman.sm9.remote.ui.main.MainViewModel" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.leinardi.androidthings.kuman.sm9.remote.ui.MainActivity">
+        tools:context="com.leinardi.androidthings.kuman.sm9.remote.ui.main.MainActivity">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -34,19 +36,35 @@
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <Button
+                android:id="@+id/reconnect_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:onClick="@{() -> viewModel.onReconnectClicked()}"
+                android:text="@string/reconnect"
+                android:visibility="@{viewModel.observable.connectionStatus == ConnectionStatus.DISCONNECTED}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/connection_info_textView" />
 
             <TextView
                 android:id="@+id/connection_info_textView"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
-                android:padding="16dp"
                 android:text="@{viewModel.observable.connectionInfo}"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:visibility="@{viewModel.observable.permissionsGranted}"
                 app:connectionStatus="@{viewModel.observable.connectionStatus}"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Connecting..." />
