@@ -1,0 +1,62 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion COMPILE_SDK_VERSION as int
+    buildToolsVersion BUILD_TOOLS_VERSION as String
+
+    defaultConfig {
+        applicationId "com.leinardi.androidthings.kuman.sm9.remote"
+        minSdkVersion MIN_SDK_VERSION as int
+        targetSdkVersion TARGET_SDK_VERSION as int
+        versionCode 1
+        versionName "1.0"
+        buildConfigField "String", "NEARBY_SERVICE_ID", "\"${NEARBY_SERVICE_ID}\""
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    def isKeystoreInfoAvailable = file(KEYSTORE_PATH).exists() && file(KEYSTORE_PROPERTIES_PATH).exists()
+
+    signingConfigs {
+        if (isKeystoreInfoAvailable) {
+            release {
+                Properties props = new Properties()
+                props.load(new FileInputStream(file(KEYSTORE_PROPERTIES_PATH)))
+                storeFile file(KEYSTORE_PATH)
+                storePassword props['store.password']
+                keyAlias props['key.alias']
+                keyPassword props['key.password']
+            }
+        }
+    }
+
+    buildTypes {
+        if (isKeystoreInfoAvailable) {
+            release {
+                minifyEnabled true
+                shrinkResources true
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+}
+
+dependencies {
+    implementation project(':common')
+    implementation 'com.android.support:appcompat-v7:27.0.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:design:27.0.1'
+    implementation 'com.android.support:support-annotations:27.0.1'
+    implementation 'com.google.android.gms:play-services-nearby:11.6.2'
+    implementation 'com.jakewharton.timber:timber:4.6.0'
+    implementation 'com.github.erz05:JoyStick:1.1.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}

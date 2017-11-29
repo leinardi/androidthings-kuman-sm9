@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-include ':app', ':pwr.a53.a'
+include ':things-app', ':pwr.a53.a', ':mobile-app', ':common'

@@ -3,7 +3,8 @@ apply plugin: 'com.leinardi.android.checkstyle'
 
 checkstyle {
     ignoreFailures = true // Whether this task will ignore failures and continue running the build.
-    configFile rootProject.file('config/checkstyle/checkstyle.xml') // The Checkstyle configuration file to use.
+    configFile rootProject.file('config/checkstyle/checkstyle.xml')
+    // The Checkstyle configuration file to use.
     toolVersion = '8.4' // The version of Checkstyle you want to be used
 }
 
@@ -12,7 +13,7 @@ android {
     buildToolsVersion BUILD_TOOLS_VERSION as String
 
     defaultConfig {
-        minSdkVersion MIN_SDK_VERSION as int
+        minSdkVersion 24
         targetSdkVersion TARGET_SDK_VERSION as int
         versionCode 1
         versionName "1.0"
