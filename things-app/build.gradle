@@ -25,13 +25,13 @@ checkstyle {
 }
 
 android {
-    compileSdkVersion COMPILE_SDK_VERSION as int
-    buildToolsVersion BUILD_TOOLS_VERSION as String
+    compileSdkVersion build_versions.target_sdk
+    buildToolsVersion build_versions.build_tools
 
     defaultConfig {
         applicationId "com.leinardi.androidthings.kuman.sm9"
         minSdkVersion 24
-        targetSdkVersion TARGET_SDK_VERSION as int
+        targetSdkVersion build_versions.target_sdk
         versionCode 1
         versionName "1.0"
         buildConfigField "String", "NEARBY_SERVICE_ID", "\"${NEARBY_SERVICE_ID}\""
@@ -71,13 +71,13 @@ android {
 }
 
 dependencies {
-    compileOnly 'com.google.android.things:androidthings:0.5.1-devpreview'
     implementation project(':common')
     implementation project(':pwr.a53.a')
-    implementation 'com.android.support:support-annotations:27.0.1'
-    implementation 'com.jakewharton.timber:timber:4.6.0'
+    compileOnly deps.androidthings
+    implementation deps.support.annotations
+    implementation deps.timber
     // Android Things Developer Preview has no mechanism to update GMS yet.
     // We use the Play Services version 11.0.0 (bundled in developer preview 5.1)
     //noinspection GradleDependency
-    compile 'com.google.android.gms:play-services-nearby:11.0.4'
+    implementation 'com.google.android.gms:play-services-nearby:11.0.4'
 }

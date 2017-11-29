@@ -1,17 +1,21 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion COMPILE_SDK_VERSION as int
-    buildToolsVersion BUILD_TOOLS_VERSION as String
+    compileSdkVersion build_versions.target_sdk
+    buildToolsVersion build_versions.build_tools
 
     defaultConfig {
         applicationId "com.leinardi.androidthings.kuman.sm9.remote"
-        minSdkVersion MIN_SDK_VERSION as int
-        targetSdkVersion TARGET_SDK_VERSION as int
+        minSdkVersion build_versions.min_sdk
+        targetSdkVersion build_versions.target_sdk
         versionCode 1
         versionName "1.0"
         buildConfigField "String", "NEARBY_SERVICE_ID", "\"${NEARBY_SERVICE_ID}\""
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    dataBinding {
+        enabled = true
     }
 
     compileOptions {
@@ -49,14 +53,24 @@ android {
 
 dependencies {
     implementation project(':common')
-    implementation 'com.android.support:appcompat-v7:27.0.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.android.support:design:27.0.1'
-    implementation 'com.android.support:support-annotations:27.0.1'
-    implementation 'com.google.android.gms:play-services-nearby:11.6.2'
-    implementation 'com.jakewharton.timber:timber:4.6.0'
-    implementation 'com.github.erz05:JoyStick:1.1.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    implementation deps.constraint_layout
+    implementation deps.joystick
+    implementation deps.play_services.nearby
+    implementation deps.support.annotations
+    implementation deps.support.app_compat
+    implementation deps.support.design
+    implementation deps.timber
+
+    testImplementation deps.junit
+
+    androidTestImplementation(deps.espresso.core, {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+    })
+    androidTestImplementation(deps.espresso.contrib, {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+    })
+    androidTestImplementation deps.dexmaker
+    androidTestImplementation deps.mockito.core, { exclude group: 'net.bytebuddy' }
 }
