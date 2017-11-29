@@ -23,4 +23,14 @@ android {
 }
 
 dependencies {
+    implementation deps.support.annotations
+    implementation deps.support.app_compat
+    implementation deps.lifecycle.runtime
+    implementation deps.lifecycle.extensions
+    implementation deps.dagger.runtime
+    implementation deps.dagger.android
+    implementation deps.dagger.android_support
+    annotationProcessor deps.dagger.android_support_compiler
+    annotationProcessor deps.dagger.compiler
+    implementation deps.timber
 }

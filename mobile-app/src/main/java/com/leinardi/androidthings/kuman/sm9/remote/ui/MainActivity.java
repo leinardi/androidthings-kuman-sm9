@@ -1,8 +1,10 @@
-package com.leinardi.androidthings.kuman.sm9.remote;
+package com.leinardi.androidthings.kuman.sm9.remote.ui;
 
 import android.Manifest;
+import android.arch.lifecycle.ViewModelProvider;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.erz.joysticklibrary.JoyStick;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -29,17 +30,22 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
-
-import java.nio.charset.Charset;
-
+import com.leinardi.androidthings.kuman.sm9.remote.BuildConfig;
+import com.leinardi.androidthings.kuman.sm9.remote.R;
+import com.leinardi.androidthings.kuman.sm9.common.di.Injectable;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity {
+import javax.inject.Inject;
+import java.nio.charset.Charset;
+
+public class MainActivity extends AppCompatActivity implements Injectable {
     private static final int PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1982;
     private GoogleApiClient mGoogleApiClient;
     private String mRemoteHostEndpoint;
     private boolean mIsConnected;
-    private TextView mLogs;
+
+    @Inject
+    ViewModelProvider.Factory mViewModelFactory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,13 +102,14 @@ public class MainActivity extends AppCompatActivity {
                         mGoogleApiClient.reconnect();
                     }
                 })
-                .addOnConnectionFailedListener(connectionResult -> Timber.d("onConnectionFailed: " + connectionResult.getErrorCode() + "\n" + connectionResult.getErrorMessage()))
+                .addOnConnectionFailedListener(connectionResult -> Timber.d("onConnectionFailed: " + connectionResult.getErrorCode() + "\n" +
+                        connectionResult.getErrorMessage()))
                 .addApi(Nearby.CONNECTIONS_API)
                 .build();
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -230,23 +237,23 @@ public class MainActivity extends AppCompatActivity {
         Timber.d("About to send message: " + message);
         Nearby.Connections.sendPayload(mGoogleApiClient, mRemoteHostEndpoint, Payload.fromBytes(message.getBytes(Charset.forName("UTF-8"))));
     }
-//
-//    private void initLayout() {
-//        setContentView(R.layout.activity_main);
-//        mLogs = (TextView) findViewById(R.id.nearby_logs);
-//
-//        findViewById(R.id.nearby_button).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!mGoogleApiClient.isConnected()) {
-//                    Timber.d("Not connected");
-//                    return;
-//                }
-//
-//                sendMessage("Hello, Things!");
-//            }
-//        });
-//    }
+    //
+    //    private void initLayout() {
+    //        setContentView(R.layout.activity_main);
+    //        mLogs = (TextView) findViewById(R.id.nearby_logs);
+    //
+    //        findViewById(R.id.nearby_button).setOnClickListener(new View.OnClickListener() {
+    //            @Override
+    //            public void onClick(View v) {
+    //                if (!mGoogleApiClient.isConnected()) {
+    //                    Timber.d("Not connected");
+    //                    return;
+    //                }
+    //
+    //                sendMessage("Hello, Things!");
+    //            }
+    //        });
+    //    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

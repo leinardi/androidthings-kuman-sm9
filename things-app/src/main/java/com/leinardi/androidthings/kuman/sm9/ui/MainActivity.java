@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.leinardi.androidthings.kuman.sm9;
+package com.leinardi.androidthings.kuman.sm9.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -32,14 +32,13 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
-import com.leinardi.androidthings.pwra53a.PwrA53A;
+import com.leinardi.androidthings.kuman.sm9.BuildConfig;
+import com.leinardi.androidthings.kuman.sm9.common.di.Injectable;
+import timber.log.Timber;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-
-import timber.log.Timber;
 
 /**
  * Skeleton of the main Android Things activity. Implement your device's logic
@@ -59,21 +58,21 @@ import timber.log.Timber;
  * For more complex peripherals, look for an existing user-space driver, or implement one if none
  * is available.
  */
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements Injectable {
     private GoogleApiClient mGoogleApiClient;
     private List<String> mRemotePeerEndpoints = new ArrayList<>();
-//    private PwrA53A mPwrA53A;
+    //    private PwrA53A mPwrA53A;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.d("onCreate");
 
-//        try {
-//            mPwrA53A = new PwrA53A();
-//        } catch (IOException e) {
-//            Timber.e(e);
-//        }
+        //        try {
+        //            mPwrA53A = new PwrA53A();
+        //        } catch (IOException e) {
+        //            Timber.e(e);
+        //        }
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -113,7 +112,8 @@ public class MainActivity extends Activity {
             Nearby.Connections.stopAdvertising(mGoogleApiClient);
 
             if (!mRemotePeerEndpoints.isEmpty()) {
-                Nearby.Connections.sendPayload(mGoogleApiClient, mRemotePeerEndpoints, Payload.fromBytes("Shutting down host".getBytes(Charset.forName("UTF-8"))));
+                Nearby.Connections.sendPayload(mGoogleApiClient, mRemotePeerEndpoints, Payload.fromBytes("Shutting down host".getBytes(Charset
+                        .forName("UTF-8"))));
                 Nearby.Connections.stopAllEndpoints(mGoogleApiClient);
                 mRemotePeerEndpoints.clear();
             }
@@ -134,7 +134,8 @@ public class MainActivity extends Activity {
                                     public void onPayloadReceived(String endpointId, Payload payload) {
                                         if (payload.getType() == Payload.Type.BYTES) {
                                             Timber.d("onPayloadReceived: " + new String(payload.asBytes()));
-                                            Nearby.Connections.sendPayload(mGoogleApiClient, endpointId, Payload.fromBytes("ACK".getBytes(Charset.forName("UTF-8"))));
+                                            Nearby.Connections.sendPayload(mGoogleApiClient, endpointId, Payload.fromBytes("ACK".getBytes(Charset
+                                                    .forName("UTF-8"))));
                                         }
                                     }
 

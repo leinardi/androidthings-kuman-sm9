@@ -61,6 +61,15 @@ dependencies {
     implementation deps.support.design
     implementation deps.timber
 
+    implementation deps.lifecycle.runtime
+    implementation deps.lifecycle.extensions
+
+    implementation deps.dagger.runtime
+    implementation deps.dagger.android
+    implementation deps.dagger.android_support
+    annotationProcessor deps.dagger.android_support_compiler
+    annotationProcessor deps.dagger.compiler
+
     testImplementation deps.junit
 
     androidTestImplementation(deps.espresso.core, {

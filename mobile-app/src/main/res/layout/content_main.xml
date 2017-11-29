@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.leinardi.androidthings.kuman.sm9.remote.MainActivity"
+    tools:context="com.leinardi.androidthings.kuman.sm9.remote.ui.MainActivity"
     tools:showIn="@layout/activity_main">
 
     <com.erz.joysticklibrary.JoyStick

@@ -94,6 +94,10 @@ public class PwrA53A implements AutoCloseable {
         }
     }
 
+    public static int byteToUnsignedInt(byte x) {
+        return x & 0xFF;
+    }
+
     private void connect() throws IOException {
         PeripheralManagerService pioService = new PeripheralManagerService();
 
@@ -295,10 +299,6 @@ public class PwrA53A implements AutoCloseable {
         } catch (IOException e) {
             Log.e(TAG, "Error updating GPIO value", e);
         }
-    }
-
-    public static int byteToUnsignedInt(byte x) {
-        return x & 0xFF;
     }
 
     /**

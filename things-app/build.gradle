@@ -79,5 +79,13 @@ dependencies {
     // Android Things Developer Preview has no mechanism to update GMS yet.
     // We use the Play Services version 11.0.0 (bundled in developer preview 5.1)
     //noinspection GradleDependency
-    implementation 'com.google.android.gms:play-services-nearby:11.0.4'
+    implementation ('com.google.android.gms:play-services-nearby:11.0.4') {
+        exclude group: 'com.android.support', module: 'support-fragment'
+    }
+
+    implementation deps.dagger.runtime
+    implementation deps.dagger.android
+    implementation deps.dagger.android_support
+    annotationProcessor deps.dagger.android_support_compiler
+    annotationProcessor deps.dagger.compiler
 }
