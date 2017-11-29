@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.erz.joysticklibrary.JoyStick" />
+
+        <variable
+            name="viewModel"
+            type="com.leinardi.androidthings.kuman.sm9.remote.ui.MainViewModel" />
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.leinardi.androidthings.kuman.sm9.remote.ui.MainActivity">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <TextView
+                android:id="@+id/connection_info_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:text="@{viewModel.observable.connectionInfo}"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:visibility="@{viewModel.observable.permissionsGranted}"
+                app:connectionStatus="@{viewModel.observable.connectionStatus}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Connecting..." />
+
+            <com.erz.joysticklibrary.JoyStick
+                android:id="@+id/motor_joystick"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:listener="@{viewModel.getJoyStickListener()}"
+                android:type="@{JoyStick.TYPE_4_AXIS}"
+                android:visibility="@{viewModel.observable.permissionsGranted}"
+                app:buttonColor="?attr/colorAccent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:padColor="?attr/colorPrimary" />
+
+            <TextView
+                android:id="@+id/permission_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/permission_required_info"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:visibility="@{!viewModel.observable.permissionsGranted}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

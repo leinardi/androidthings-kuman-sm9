@@ -1,10 +1,19 @@
 package com.leinardi.androidthings.kuman.sm9.common.ui;
 
 import android.arch.lifecycle.ViewModel;
+import android.databinding.BaseObservable;
 
-/**
- * Created by leinardi on 29/11/17.
- */
+import javax.inject.Inject;
 
-public class BaseViewModel extends ViewModel {
+public class BaseViewModel<VMO extends BaseObservable> extends ViewModel {
+    private VMO mObservable;
+
+    @Inject
+    void inject(VMO observable) {
+        mObservable = observable;
+    }
+
+    public VMO getObservable() {
+        return mObservable;
+    }
 }

@@ -13,6 +13,15 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
+    dataBinding {
+        enabled = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -30,6 +39,8 @@ dependencies {
     implementation deps.dagger.runtime
     implementation deps.dagger.android
     implementation deps.dagger.android_support
+    implementation deps.rx_android
+    implementation deps.rxjava2
     annotationProcessor deps.dagger.android_support_compiler
     annotationProcessor deps.dagger.compiler
     implementation deps.timber

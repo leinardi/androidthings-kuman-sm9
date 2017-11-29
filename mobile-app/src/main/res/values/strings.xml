@@ -1,4 +1,14 @@
 <resources>
-    <string name="app_name">Kuman SM9 Android Things Remote</string>
+    <string name="app_name">Android Things Kuman SM9 Remote</string>
     <string name="action_settings">Settings</string>
+    <string name="permission_required_info">You must grant the permissions to be able to connect to the robot…</string>
+    <string name="connection_info_connected">Connected</string>
+    <string name="connection_info_disconnected">Disconnected</string>
+    <string name="connection_info_start_discovery">Start discovery…</string>
+    <string name="connection_info_discovering">Discovery in progress…</string>
+    <string name="connection_info_discovery_failed">Discovery failed: (%1$d) %2$s</string>
+    <string name="connection_info_endpoing_found">Found %1$s</string>
+    <string name="connection_info_connection_failed">Connection failed: (%1$d) %2$s</string>
+    <string name="connection_info_connection_lost">Connection lost</string>
+    <string name="connection_info_google_api_connection_failed">Unable to connect to Google API Client (%1$s)</string>
 </resources>

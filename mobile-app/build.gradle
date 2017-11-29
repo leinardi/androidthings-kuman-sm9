@@ -70,6 +70,9 @@ dependencies {
     annotationProcessor deps.dagger.android_support_compiler
     annotationProcessor deps.dagger.compiler
 
+    implementation deps.rx_android
+    implementation deps.rxjava2
+
     testImplementation deps.junit
 
     androidTestImplementation(deps.espresso.core, {
