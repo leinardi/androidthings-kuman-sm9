@@ -16,21 +16,23 @@
 
 package com.leinardi.androidthings.kuman.sm9.di;
 
-import com.leinardi.androidthings.kuman.sm9.ThingsApp;
-import com.leinardi.androidthings.kuman.sm9.common.di.AppInjector;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
 
-public class ThingsAppInjector extends AppInjector<ThingsApp> {
-    private static final ThingsAppInjector INSTANCE = new ThingsAppInjector();
+import com.leinardi.androidthings.kuman.sm9.common.di.ViewModelKey;
+import com.leinardi.androidthings.kuman.sm9.common.ui.ViewModelFactory;
+import com.leinardi.androidthings.kuman.sm9.ui.MainViewModel;
+import dagger.Binds;
+import dagger.Module;
+import dagger.multibindings.IntoMap;
 
-    private ThingsAppInjector() {
-    }
+@Module
+abstract class ViewModelModule {
+    @Binds
+    @IntoMap
+    @ViewModelKey(MainViewModel.class)
+    abstract ViewModel bindUserViewModel(MainViewModel userViewModel);
 
-    public static ThingsAppInjector getInstance() {
-        return INSTANCE;
-    }
-
-    @Override
-    protected void injectApplication(ThingsApp application) {
-        DaggerAppComponent.builder().application(application).build().inject(application);
-    }
+    @Binds
+    abstract ViewModelProvider.Factory bindViewModelFactory(ViewModelFactory factory);
 }

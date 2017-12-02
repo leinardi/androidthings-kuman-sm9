@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package com.leinardi.androidthings.kuman.sm9.remote;
+package com.leinardi.androidthings.kuman.sm9.ui;
 
-import org.junit.Test;
+import android.databinding.BaseObservable;
 
-import static org.junit.Assert.*;
+import javax.inject.Inject;
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
-public class ExampleUnitTest {
-    @Test
-    public void addition_isCorrect() throws Exception {
-        assertEquals(4, 2 + 2);
+public class MainViewModelObservable extends BaseObservable {
+    @Inject
+    public MainViewModelObservable() {
     }
 }

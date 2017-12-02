@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, The Android Open Source Project
+ * Copyright $today.yea Roberto Leinardi.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.leinardi.android.checkstyle'
 
 checkstyle {
-    ignoreFailures = true // Whether this task will ignore failures and continue running the build.
+    ignoreFailures = false // Whether this task will ignore failures and continue running the build.
     configFile rootProject.file('config/checkstyle/checkstyle.xml')
     // The Checkstyle configuration file to use.
     toolVersion = '8.4' // The version of Checkstyle you want to be used
@@ -35,6 +35,10 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "String", "NEARBY_SERVICE_ID", "\"${NEARBY_SERVICE_ID}\""
+    }
+
+    dataBinding {
+        enabled = true
     }
 
     compileOptions {
@@ -72,8 +76,13 @@ android {
 
 dependencies {
     implementation project(':common')
-    implementation project(':pwr.a53.a')
+    implementation project(':pwra53a')
+    implementation project(':sh1106')
     compileOnly deps.androidthings
+    implementation deps.support.annotations
+    implementation deps.support.app_compat
+    implementation deps.lifecycle.runtime
+    implementation deps.lifecycle.extensions
     implementation deps.support.annotations
     implementation deps.timber
     // Android Things Developer Preview has no mechanism to update GMS yet.

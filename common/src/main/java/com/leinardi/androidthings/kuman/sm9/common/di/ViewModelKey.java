@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package com.leinardi.androidthings.kuman.sm9.remote;
+package com.leinardi.androidthings.kuman.sm9.common.di;
 
-import org.junit.Test;
+import android.arch.lifecycle.ViewModel;
 
-import static org.junit.Assert.*;
+import dagger.MapKey;
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
-public class ExampleUnitTest {
-    @Test
-    public void addition_isCorrect() throws Exception {
-        assertEquals(4, 2 + 2);
-    }
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Documented
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@MapKey
+public @interface ViewModelKey {
+    Class<? extends ViewModel> value();
 }

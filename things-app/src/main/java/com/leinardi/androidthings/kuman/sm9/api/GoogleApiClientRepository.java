@@ -1,3 +1,19 @@
+/*
+ * Copyright $today.yea Roberto Leinardi.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.leinardi.androidthings.kuman.sm9.api;
 
 import android.app.Application;
@@ -33,13 +49,12 @@ public class GoogleApiClientRepository extends BaseRepository {
     public GoogleApiClientRepository(Application application) {
         mApplication = application;
         setupGoogleApiClient();
-        connectGoogleApiClient();
     }
 
     @Override
     public void clear() {
         super.clear();
-        disconnectGoogleApiClient();
+        disconnect();
     }
 
     private void setupGoogleApiClient() {
@@ -62,15 +77,15 @@ public class GoogleApiClientRepository extends BaseRepository {
                 .build();
     }
 
-    public void connectGoogleApiClient() {
-        Timber.d("connectGoogleApiClient");
+    public void connect() {
+        Timber.d("connect");
         if (!mGoogleApiClient.isConnected() && !mGoogleApiClient.isConnecting()) {
             mGoogleApiClient.connect();
         }
     }
 
-    public void disconnectGoogleApiClient() {
-        Timber.d("disconnectGoogleApiClient");
+    public void disconnect() {
+        Timber.d("disconnect");
         if (mGoogleApiClient.isConnected()) {
             Nearby.Connections.stopAdvertising(mGoogleApiClient);
 

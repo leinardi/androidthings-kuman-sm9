@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, The Android Open Source Project
+ * Copyright $today.yea Roberto Leinardi.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,33 @@
 
 package com.leinardi.androidthings.kuman.sm9.ui;
 
-import android.app.Activity;
+import android.databinding.DataBindingUtil;
+import android.databinding.Observable;
 import android.os.Bundle;
 
+import com.leinardi.androidthings.kuman.sm9.R;
 import com.leinardi.androidthings.kuman.sm9.common.di.Injectable;
+import com.leinardi.androidthings.kuman.sm9.common.ui.BaseActivity;
+import com.leinardi.androidthings.kuman.sm9.databinding.MainActivityBinding;
 import timber.log.Timber;
 
-import javax.inject.Inject;
-
-public class MainActivity extends Activity implements Injectable {
-    @Inject
-    MainController mMainController;
+public class MainActivity extends BaseActivity<MainViewModel> implements Injectable {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.d("onCreate");
+        MainActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.main_activity);
+        binding.setViewModel(getViewModel());
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onViewModelPropertyChanged(Observable observable, int propertyId) {
+
+    }
+
+    @Override
+    public void onDestroy() {
         super.onDestroy();
         Timber.d("onDestroy");
     }

@@ -1,0 +1,15 @@
+language: android
+jdk: oraclejdk8
+sudo: true
+android:
+  components:
+    - tools
+    - platform-tools
+    - tools
+    - build-tools-26.0.0
+    - android-26
+licenses:
+    - android-sdk-preview-license-.+
+    - android-sdk-license-.+
+    - google-gdk-license-.+
+script: ./gradlew clean check --profile
