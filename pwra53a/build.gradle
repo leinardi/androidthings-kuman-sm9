@@ -40,16 +40,4 @@ dependencies {
     implementation deps.support.annotations
 
     testImplementation deps.junit
-
-    androidTestImplementation(deps.espresso.core, {
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.google.code.findbugs', module: 'jsr305'
-    })
-    androidTestImplementation(deps.espresso.contrib, {
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.google.code.findbugs', module: 'jsr305'
-    })
-    androidTestImplementation deps.dexmaker
-    androidTestImplementation deps.mockito.core, { exclude group: 'net.bytebuddy' }
-
 }
