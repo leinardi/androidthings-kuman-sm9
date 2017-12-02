@@ -2,7 +2,7 @@ Android Things Kuman SM9
 =====================================
 
 [![GitHub release](https://img.shields.io/github/release/leinardi/androidthings-kuman-sm9.svg?style=plastic)](https://github.com/leinardi/androidthings-kuman-sm9/releases)
-[![Travis](https://img.shields.io/travis/leinardi/androidthings-kuman-sm9/dev.svg?style=plastic)](https://travis-ci.org/leinardi/androidthings-kuman-sm9)
+[![Travis](https://img.shields.io/travis/leinardi/androidthings-kuman-sm9/master.svg?style=plastic)](https://travis-ci.org/leinardi/androidthings-kuman-sm9)
 [![GitHub license](https://img.shields.io/github/license/leinardi/androidthings-kuman-sm9.svg?style=plastic)](https://github.com/leinardi/androidthings-kuman-sm9/blob/master/LICENSE)
 
 This project offer an Android Things driver for the PWR.A53.A board, an 
