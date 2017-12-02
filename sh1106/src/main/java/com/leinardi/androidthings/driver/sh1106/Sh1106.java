@@ -57,6 +57,7 @@ public class Sh1106 implements Closeable {
     private static final int COMMAND_DISPLAY_START_LINE = 0x40;
     private static final int COMMAND_SEGMENT_REMAP = 0xA1;
     private static final int COMMAND_NORMAL_DISPLAY = 0xA6;
+    private static final int COMMAND_INVERTED_DISPLAY = 0xA7;
     private static final int COMMAND_DISPLAY_OFFSET = 0xD3;
     private static final int COMMAND_DISPLAY_OFFSET_VALUE = 0x00;
     private static final int COMMAND_DISPLAY_CLOCK_DIV = 0xD5;
@@ -68,13 +69,6 @@ public class Sh1106 implements Closeable {
     private static final int COMMAND_VCOM_DESELECT_LEVEL = 0xDB;
     private static final int COMMAND_VCOM_DESELECT_LEVEL_VALUE = 0x20;
     private static final int COMMAND_CHARGE_PUMP = 0x8D;
-
-    private static final int COMMAND_ACTIVATE_SCROLL = 0x2F;
-    private static final int COMMAND_DEACTIVATE_SCROLL = 0x2E;
-    private static final int COMMAND_RIGHT_HORIZONTAL_SCROLL = 0x26;
-    private static final int COMMAND_LEFT_HORIZONTAL_SCROLL = 0x27;
-    private static final int COMMAND_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL = 0x29;
-    private static final int COMMAND_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL = 0x2A;
     private static final int COMMAND_CONTRAST_LEVEL = 0x81;
 
     private static final byte[] INIT_PAYLOAD = new byte[]{
@@ -85,7 +79,7 @@ public class Sh1106 implements Closeable {
             0, (byte) COMMAND_COMMON_OUTPUT_SCAN_DIRECTION,
             0, (byte) COMMAND_LOW_COLUMN,
             0, (byte) COMMAND_SEGMENT_REMAP,
-            0, (byte) COMMAND_NORMAL_DISPLAY,
+            0, (byte) COMMAND_INVERTED_DISPLAY,
             0, (byte) COMMAND_DISPLAY_START_LINE,
             0, (byte) COMMAND_DISPLAY_OFFSET,
             0, (byte) COMMAND_DISPLAY_OFFSET_VALUE,
@@ -101,13 +95,6 @@ public class Sh1106 implements Closeable {
             0, (byte) COMMAND_CHARGE_PUMP,
 
     };
-
-    public enum ScrollMode {
-        RightHorizontal,
-        LeftHorizontal,
-        VerticalRightHorizontal,
-        VerticalLeftHorizontal
-    }
 
     // Screen dimension.
     private int mWidth;
@@ -199,7 +186,6 @@ public class Sh1106 implements Closeable {
             page[0] = (byte) COMMAND_DISPLAY_START_LINE;
         }
         mI2cDevice.write(INIT_PAYLOAD, INIT_PAYLOAD.length);
-        stopScroll();
     }
 
     @Override
@@ -298,6 +284,24 @@ public class Sh1106 implements Closeable {
     }
 
     /**
+     * Invert the display color without rewriting the contents of the display data RAM..
+     *
+     * @param invert Set to true to invert the display color; set to false to set the display back to normal.
+     * @throws IOException
+     * @throws IllegalStateException
+     */
+    public void setInvertDisplay(boolean invert) throws IOException, IllegalStateException {
+        if (mI2cDevice == null) {
+            throw new IllegalStateException("I2C Device not open");
+        }
+        if (invert) {
+            mI2cDevice.writeRegByte(0, (byte) COMMAND_INVERTED_DISPLAY);
+        } else {
+            mI2cDevice.writeRegByte(0, (byte) COMMAND_NORMAL_DISPLAY);
+        }
+    }
+
+    /**
      * Renders the current pixel data to the screen.
      *
      * @throws IOException
@@ -311,67 +315,7 @@ public class Sh1106 implements Closeable {
             mI2cDevice.writeRegByte(0, (byte) (COMMAND_PAGE + page));
             mI2cDevice.writeRegByte(0, (byte) COMMAND_HIGH_COLUMN);
             mI2cDevice.writeRegByte(0, (byte) COMMAND_LOW_COLUMN);
-
             mI2cDevice.write(mBuffer[page], mBuffer[page].length);
         }
-    }
-
-    /**
-     * Start scrolling the display horizontally.
-     *
-     * @param startY     The starting row to scroll.
-     * @param finishY    The ending row to scroll.
-     * @param scrollMode Configures the direction that the display contents scroll.
-     * @throws IOException
-     * @throws IllegalStateException
-     */
-    public void startScroll(int startY, int finishY, ScrollMode scrollMode)
-            throws IOException, IllegalStateException {
-        if (mI2cDevice == null) {
-            throw new IllegalStateException("I2C Device not open");
-        }
-
-        int scrollModeVal = 0;
-        switch (scrollMode) {
-            case RightHorizontal:
-                scrollModeVal = COMMAND_RIGHT_HORIZONTAL_SCROLL;
-                break;
-            case LeftHorizontal:
-                scrollModeVal = COMMAND_LEFT_HORIZONTAL_SCROLL;
-                break;
-            case VerticalLeftHorizontal:
-                scrollModeVal = COMMAND_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL;
-                break;
-            case VerticalRightHorizontal:
-                scrollModeVal = COMMAND_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL;
-                break;
-            default:
-                // Should never happen
-                break;
-        }
-        byte[] payload = new byte[]{
-                0, (byte) scrollModeVal,
-                0, 0,
-                0, (byte) startY,
-                0, 0,
-                0, (byte) finishY,
-                0, 0,
-                0, (byte) 0xFF,
-                0, COMMAND_ACTIVATE_SCROLL
-        };
-        mI2cDevice.write(payload, payload.length);
-    }
-
-    /**
-     * Stop scrolling the display
-     *
-     * @throws IOException
-     * @throws IllegalStateException
-     */
-    public void stopScroll() throws IOException, IllegalStateException {
-        if (mI2cDevice == null) {
-            throw new IllegalStateException("I2C Device not open");
-        }
-        mI2cDevice.writeRegByte(0, (byte) COMMAND_DEACTIVATE_SCROLL);
     }
 }
