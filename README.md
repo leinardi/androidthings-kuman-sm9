@@ -27,7 +27,7 @@ Features of the project:
 - [x] Add TravisCI integration with Github
 - [x] Add project checkstyle and code style configuration
 - [x] Add license profile IDEA configuration
-- [ ] Open a bug report for I2C read not working for PWR.A53.A on Things 0.6.0-devpreviw
+- [x] Open a bug report for I2C read not working for PWR.A53.A on Things 0.6.0-devpreviw
 - [ ] Move the `sh1106` on a separate project and publish on maven
 - [ ] Add violation-comments-to-github-gradle-plugin and integrate it with TravisCI
 - [ ] Define and implement a communication protocol between Things app and Mobile app
@@ -45,7 +45,7 @@ Features of the project:
 - [ ] Show current status (stop, moving forward, following path, etc) on HD44780
 - [ ] Use HC-SR04 to avoid collisions
 - [ ] Use E18-D80NK to implement follow path
-- [ ] Use Gyro to keep the camera pointed to the same spot even if the car turns
+- [ ] Use Gyro to give the option to lock the camera on a direction even if the car turns
 
 ## Pre-requisites
 
