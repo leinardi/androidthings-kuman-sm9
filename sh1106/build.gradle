@@ -55,5 +55,7 @@ dependencies {
     compileOnly deps.androidthings
     implementation deps.support.annotations
 
-    testImplementation deps.junit
+    testImplementation deps.androidthings
+    testImplementation deps.powermock.module_junit4
+    testImplementation deps.powermock.api_mockito
 }
