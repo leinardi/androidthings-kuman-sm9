@@ -21,17 +21,19 @@ Features of the project:
 ## Roadmap
 
 - [x] Create projects modules and add common frameworks/libraries/tools (Dagger, Rx, MVVM, checkstyle, etc)
-- [x] Write Android Things driver for PWR.A53.A (motor, servo and led control via I2C and GPIO)
+- [x] Write Android Things driver for PWR.A53.A (motors, servos and led control via I2C and GPIO)
 - [x] Establish a connection between Things app and Mobile app using Google Nearby API
-- [x] Adapt the `ssd1306` driver to work with the SH1106
+- [x] Adapt Android Things driver for SSD1306 to work with the SH1106
 - [x] Add TravisCI integration with Github
 - [x] Add project checkstyle and code style configuration
 - [x] Add license profile IDEA configuration
 - [ ] Open a bug report for I2C read not working for PWR.A53.A on Things 0.6.0-devpreviw
 - [ ] Move the `sh1106` on a separate project and publish on maven
+- [ ] Add violation-comments-to-github-gradle-plugin and integrate it with TravisCI
 - [ ] Define and implement a communication protocol between Things app and Mobile app
 - [ ] Allow to control the motors via Mobile app
 - [ ] Allow to control the cradle servos via Mobile app
+- [ ] Release first alpha version
 - [ ] Write Android Things driver for HD44780 LCD controller
 - [ ] Add support for Raspberry Pi Camera
 - [ ] Stream camera to Mobile app
