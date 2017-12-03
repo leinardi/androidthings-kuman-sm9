@@ -34,7 +34,7 @@ Features of the project:
 - [ ] Allow to control the motors via Mobile app
 - [ ] Allow to control the cradle servos via Mobile app
 - [ ] Release first alpha version
-- [ ] Create a dev branch and keep the development on that branch
+- [ ] Create a dev branch and continue the development on that branch
 - [ ] Write Android Things driver for HD44780 LCD controller
 - [ ] Add support for Raspberry Pi Camera
 - [ ] Stream camera to Mobile app
