@@ -229,9 +229,9 @@ public class PwrA53A implements AutoCloseable {
     public void motorForward() throws IOException, IllegalStateException {
         Log.d(TAG, "Motor Forward");
         getGpio(PWR_A53_A_ENA).setValue(true);
+        getGpio(PWR_A53_A_ENB).setValue(true);
         getGpio(PWR_A53_A_IN1).setValue(true);
         getGpio(PWR_A53_A_IN2).setValue(false);
-        getGpio(PWR_A53_A_ENB).setValue(true);
         getGpio(PWR_A53_A_IN3).setValue(true);
         getGpio(PWR_A53_A_IN4).setValue(false);
         getGpio(PWR_A53_A_LED1).setValue(false);
@@ -241,9 +241,9 @@ public class PwrA53A implements AutoCloseable {
     public void motorBackward() throws IOException, IllegalStateException {
         Log.d(TAG, "Motor Backward");
         getGpio(PWR_A53_A_ENA).setValue(true);
-        getGpio(PWR_A53_A_IN1).setValue(true);
-        getGpio(PWR_A53_A_IN2).setValue(false);
         getGpio(PWR_A53_A_ENB).setValue(true);
+        getGpio(PWR_A53_A_IN1).setValue(false);
+        getGpio(PWR_A53_A_IN2).setValue(true);
         getGpio(PWR_A53_A_IN3).setValue(false);
         getGpio(PWR_A53_A_IN4).setValue(true);
         getGpio(PWR_A53_A_LED1).setValue(true);
@@ -253,9 +253,9 @@ public class PwrA53A implements AutoCloseable {
     public void motorTurnLeft() throws IOException, IllegalStateException {
         Log.d(TAG, "Motor Turn Left");
         getGpio(PWR_A53_A_ENA).setValue(true);
+        getGpio(PWR_A53_A_ENB).setValue(true);
         getGpio(PWR_A53_A_IN1).setValue(true);
-        getGpio(PWR_A53_A_IN2).setValue(true);
-        getGpio(PWR_A53_A_ENB).setValue(false);
+        getGpio(PWR_A53_A_IN2).setValue(false);
         getGpio(PWR_A53_A_IN3).setValue(false);
         getGpio(PWR_A53_A_IN4).setValue(true);
         getGpio(PWR_A53_A_LED1).setValue(false);
@@ -265,9 +265,9 @@ public class PwrA53A implements AutoCloseable {
     public void motorTurnRight() throws IOException, IllegalStateException {
         Log.d(TAG, "Motor Turn Right");
         getGpio(PWR_A53_A_ENA).setValue(true);
-        getGpio(PWR_A53_A_IN1).setValue(true);
-        getGpio(PWR_A53_A_IN2).setValue(false);
         getGpio(PWR_A53_A_ENB).setValue(true);
+        getGpio(PWR_A53_A_IN1).setValue(false);
+        getGpio(PWR_A53_A_IN2).setValue(true);
         getGpio(PWR_A53_A_IN3).setValue(true);
         getGpio(PWR_A53_A_IN4).setValue(false);
         getGpio(PWR_A53_A_LED1).setValue(false);
@@ -277,9 +277,9 @@ public class PwrA53A implements AutoCloseable {
     public void motorStop() throws IOException, IllegalStateException {
         Log.d(TAG, "Motor Stop");
         getGpio(PWR_A53_A_ENA).setValue(false);
-        getGpio(PWR_A53_A_IN1).setValue(true);
-        getGpio(PWR_A53_A_IN2).setValue(false);
         getGpio(PWR_A53_A_ENB).setValue(false);
+        getGpio(PWR_A53_A_IN1).setValue(false);
+        getGpio(PWR_A53_A_IN2).setValue(false);
         getGpio(PWR_A53_A_IN3).setValue(false);
         getGpio(PWR_A53_A_IN4).setValue(false);
         getGpio(PWR_A53_A_LED1).setValue(true);
