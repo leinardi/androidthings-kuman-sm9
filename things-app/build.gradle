@@ -77,14 +77,15 @@ android {
 dependencies {
     implementation project(':common')
     implementation project(':pwra53a')
-    implementation project(':sh1106')
     compileOnly deps.androidthings
+    implementation deps.driver_sh1106
     implementation deps.support.annotations
     implementation deps.support.app_compat
     implementation deps.lifecycle.runtime
     implementation deps.lifecycle.extensions
     implementation deps.support.annotations
     implementation deps.timber
+    implementation deps.commons_lang3
     // Android Things Developer Preview has no mechanism to update GMS yet.
     // We use the Play Services version 11.0.0 (bundled in developer preview 5.1)
     //noinspection GradleDependency

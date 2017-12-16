@@ -28,7 +28,7 @@ Features of the project:
 - [x] Add project checkstyle and code style configuration
 - [x] Add license profile IDEA configuration
 - [x] Open a bug report for I2C read not working for PWR.A53.A on Things 0.6.0-devpreviw
-- [ ] Move the `sh1106` on a separate project and publish on maven
+- [x] Move the `sh1106` on a separate project and publish on maven
 - [ ] Add violation-comments-to-github-gradle-plugin and integrate it with TravisCI
 - [ ] Define and implement a communication protocol between Things app and Mobile app
 - [ ] Allow to control the motors via Mobile app
@@ -74,7 +74,7 @@ This board offers the following features:
 As far as I know this board i sold only in some bundle for the Raspberry Pi 3 
 sold by Kuman Ltd or Xiao R Geek Technology Co.Ltd.
 
-In Europe and US the is part of the kit Kuman SM9 and can be bought on 
+In Europe and US it is part of the kit Kuman SM9 and can be bought on 
 [Amazon](https://www.amazon.com/Kuman-Professional-Raspberry-Electronic-Controlled/dp/B071L7YGXK/) 
 or directly from the 
 [Kuman](http://www.kumantech.com/kuman-4wd-smart-wireless-wifi-rc-video-robot-car-kit-for-raspberry-pi-3-intelligent-robotics8g-sd-card-controlled-by-pc-android-ios-app-sm9_p0386.html) website. 

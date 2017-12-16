@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-include ':things-app', ':pwra53a', ':mobile-app', ':common', ':sh1106'
+include ':things-app', ':pwra53a', ':mobile-app', ':common'
