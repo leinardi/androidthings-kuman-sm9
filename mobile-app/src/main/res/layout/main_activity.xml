@@ -21,8 +21,6 @@
 
     <data>
 
-        <import type="com.erz.joysticklibrary.JoyStick" />
-
         <import type="com.leinardi.androidthings.kuman.sm9.remote.api.GoogleApiClientRepository.ConnectionStatus" />
 
         <variable
@@ -87,18 +85,29 @@
                 tools:text="Connecting..." />
 
             <com.erz.joysticklibrary.JoyStick
-                android:id="@+id/motor_joystick"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:listener="@{viewModel.getJoyStickListener()}"
-                android:type="@{JoyStick.TYPE_4_AXIS}"
+                android:id="@+id/car_joystick"
+                android:layout_width="@dimen/joystick_size"
+                android:layout_height="@dimen/joystick_size"
+                android:listener="@{viewModel.getCarJoyStickListener()}"
+                android:type="@{viewModel.observable.carJoystickType}"
                 android:visibility="@{viewModel.observable.permissionsGranted}"
                 app:buttonColor="?attr/colorAccent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:padColor="?attr/colorPrimary" />
+
+            <com.erz.joysticklibrary.JoyStick
+                android:id="@+id/camera_joystick"
+                android:layout_width="@dimen/joystick_size"
+                android:layout_height="@dimen/joystick_size"
+                android:listener="@{viewModel.getCameraJoyStickListener()}"
+                android:type="@{viewModel.observable.cameraJoystickType}"
+                android:visibility="@{viewModel.observable.permissionsGranted}"
+                app:buttonColor="?attr/colorAccent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:padColor="?attr/colorPrimary"
+                app:stayPut="true" />
 
             <TextView
                 android:id="@+id/permission_textView"

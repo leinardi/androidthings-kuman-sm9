@@ -16,4 +16,5 @@
 
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="joystick_size">200dp</dimen>
 </resources>

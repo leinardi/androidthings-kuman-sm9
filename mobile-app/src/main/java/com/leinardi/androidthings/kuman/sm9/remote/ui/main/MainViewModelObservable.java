@@ -19,6 +19,7 @@ package com.leinardi.androidthings.kuman.sm9.remote.ui.main;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
+import com.erz.joysticklibrary.JoyStick;
 import com.leinardi.androidthings.kuman.sm9.remote.BR;
 import com.leinardi.androidthings.kuman.sm9.remote.api.GoogleApiClientRepository;
 
@@ -30,6 +31,8 @@ public class MainViewModelObservable extends BaseObservable {
     private CharSequence mConnectionInfo;
     @GoogleApiClientRepository.ConnectionStatus
     private int mConnectionStatus;
+    private int mCarJoystickType = JoyStick.TYPE_8_AXIS;
+    private int mCameraJoystickType = JoyStick.TYPE_8_AXIS;
 
     @Inject
     public MainViewModelObservable() {
@@ -65,4 +68,23 @@ public class MainViewModelObservable extends BaseObservable {
         notifyPropertyChanged(BR.connectionStatus);
     }
 
+    @Bindable
+    public int getCarJoystickType() {
+        return mCarJoystickType;
+    }
+
+    public void setCarJoystickType(int carJoystickType) {
+        mCarJoystickType = carJoystickType;
+        notifyPropertyChanged(BR.carJoystickType);
+    }
+
+    @Bindable
+    public int getCameraJoystickType() {
+        return mCameraJoystickType;
+    }
+
+    public void setCameraJoystickType(int cameraJoystickType) {
+        mCameraJoystickType = cameraJoystickType;
+        notifyPropertyChanged(BR.cameraJoystickType);
+    }
 }

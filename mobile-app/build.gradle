@@ -97,6 +97,8 @@ dependencies {
     implementation deps.rx_android
     implementation deps.rxjava2
 
+    implementation deps.commons_lang3
+
     testImplementation deps.junit
 
     androidTestImplementation(deps.espresso.core, {

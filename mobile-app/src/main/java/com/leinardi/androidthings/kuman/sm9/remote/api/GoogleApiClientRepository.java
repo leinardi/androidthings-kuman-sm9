@@ -38,14 +38,15 @@ import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
 import com.leinardi.androidthings.kuman.sm9.common.api.BaseRepository;
+import com.leinardi.androidthings.kuman.sm9.common.api.car.ThingsMessage;
 import com.leinardi.androidthings.kuman.sm9.remote.BuildConfig;
 import com.leinardi.androidthings.kuman.sm9.remote.R;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.subjects.BehaviorSubject;
+import org.apache.commons.lang3.SerializationUtils;
 import timber.log.Timber;
 
 import javax.inject.Inject;
-import java.nio.charset.Charset;
 
 import static com.leinardi.androidthings.kuman.sm9.remote.api.GoogleApiClientRepository.ConnectionStatus.CONNECTED;
 import static com.leinardi.androidthings.kuman.sm9.remote.api.GoogleApiClientRepository.ConnectionStatus.CONNECTING;
@@ -110,7 +111,7 @@ public class GoogleApiClientRepository extends BaseRepository {
                 Nearby.Connections.stopDiscovery(mGoogleApiClient);
                 return;
             }
-            sendMessage("Client disconnecting");
+            sendMessage(new ThingsMessage.Builder().setClientDisconnecting().build());
             Nearby.Connections.disconnectFromEndpoint(mGoogleApiClient, mRemoteHostEndpoint);
             mRemoteHostEndpoint = null;
             updateConnectionStatus(DISCONNECTED, R.string.connection_info_disconnected);
@@ -241,9 +242,9 @@ public class GoogleApiClientRepository extends BaseRepository {
         Timber.d("onEndpointRequestConnection status: %s:%s ", status.getStatusCode(), status.getStatusMessage());
     }
 
-    public void sendMessage(String message) {
-        Timber.d("About to send message: %s", message);
-        Nearby.Connections.sendPayload(mGoogleApiClient, mRemoteHostEndpoint, Payload.fromBytes(message.getBytes(Charset.forName("UTF-8"))));
+    public void sendMessage(ThingsMessage message) {
+        byte[] data = SerializationUtils.serialize(message);
+        Nearby.Connections.sendPayload(mGoogleApiClient, mRemoteHostEndpoint, Payload.fromBytes(data));
     }
 
     @IntDef({DISCONNECTED, CONNECTING, CONNECTED})

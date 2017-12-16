@@ -17,6 +17,9 @@
 package com.leinardi.androidthings.kuman.sm9.remote.ui.main;
 
 import com.erz.joysticklibrary.JoyStick;
+import com.leinardi.androidthings.kuman.sm9.common.api.car.CameraCradlePosition;
+import com.leinardi.androidthings.kuman.sm9.common.api.car.CarMovement;
+import com.leinardi.androidthings.kuman.sm9.common.api.car.ThingsMessage;
 import com.leinardi.androidthings.kuman.sm9.common.ui.BaseViewModel;
 import com.leinardi.androidthings.kuman.sm9.remote.api.GoogleApiClientRepository;
 import com.leinardi.androidthings.kuman.sm9.remote.api.GoogleApiClientRepository.NearbyConnectionsStatusUpdate;
@@ -26,7 +29,8 @@ import timber.log.Timber;
 import javax.inject.Inject;
 
 public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
-    private static final int POWER_THRESHOLD = 33; // 33 percent
+    private static final int ANGLE_STEP = 5;
+    private static final int POWER_STEP = 10;
     private GoogleApiClientRepository mGoogleApiClientRepository;
 
     @Inject
@@ -70,15 +74,55 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
         getObservable().setPermissionsGranted(permissionsGranted);
     }
 
-    public JoyStick.JoyStickListener getJoyStickListener() {
+    public JoyStick.JoyStickListener getCarJoyStickListener() {
         return new JoyStick.JoyStickListener() {
-            int mDirection = Integer.MIN_VALUE;
+            int mSteppedAngle = Integer.MIN_VALUE;
+            int mSteppedPower = Integer.MIN_VALUE;
 
             @Override
             public void onMove(JoyStick joyStick, double angle, double power, int direction) {
-                if (direction != mDirection && (direction == JoyStick.DIRECTION_CENTER || power > POWER_THRESHOLD)) {
-                    mGoogleApiClientRepository.sendMessage("Direction " + direction);
-                    mDirection = direction;
+                int steppedAngle = (int) (Math.round(Math.toDegrees(angle) / ANGLE_STEP) * ANGLE_STEP);
+                int steppedPower = (int) (Math.round(power / POWER_STEP) * POWER_STEP);
+
+                if (steppedAngle != mSteppedAngle || steppedPower != mSteppedPower || direction == JoyStick.DIRECTION_CENTER) {
+                    Timber.d("angle = %d (%f), power = %d", steppedAngle, angle, steppedPower);
+                    ThingsMessage message = new ThingsMessage.Builder().setCarMovement(new CarMovement(steppedAngle, steppedPower)).build();
+                    mGoogleApiClientRepository.sendMessage(message);
+                    mSteppedAngle = steppedAngle;
+                    mSteppedPower = steppedPower;
+                }
+            }
+
+            @Override
+            public void onTap() {
+
+            }
+
+            @Override
+            public void onDoubleTap() {
+
+            }
+        };
+    }
+
+    public JoyStick.JoyStickListener getCameraJoyStickListener() {
+        return new JoyStick.JoyStickListener() {
+            int mVerticalAngle = Integer.MIN_VALUE;
+            int mHorizontalAngle = Integer.MIN_VALUE;
+
+            @Override
+            public void onMove(JoyStick joyStick, double angle, double power, int direction) {
+
+                int verticalAngle = (int) Math.round((Math.sin(angle) * power / 100 * CameraCradlePosition.MAX_ANGLE) / ANGLE_STEP) * ANGLE_STEP;
+                int horizontalAngle = (int) Math.round((Math.cos(angle) * power / 100 * CameraCradlePosition.MAX_ANGLE * -1) / ANGLE_STEP) *
+                        ANGLE_STEP;
+                if (mVerticalAngle != horizontalAngle || mHorizontalAngle != verticalAngle) {
+                    Timber.d("verticalAngle = %d, horizontalAngle = %d", verticalAngle, horizontalAngle);
+                    ThingsMessage message = new ThingsMessage.Builder().setCameraCradlePosition(
+                            new CameraCradlePosition(horizontalAngle, verticalAngle)).build();
+                    mGoogleApiClientRepository.sendMessage(message);
+                    mVerticalAngle = horizontalAngle;
+                    mHorizontalAngle = verticalAngle;
                 }
             }
 
