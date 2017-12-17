@@ -184,12 +184,6 @@
                 android:onClick="@{() -> viewModel.onToggleContrastClicked()}"
                 android:text="Toggle contrast" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="@{() -> viewModel.onStartScrollClicked()}"
-                android:text="Start scroll" />
-
         </LinearLayout>
 
     </LinearLayout>

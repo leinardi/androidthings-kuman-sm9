@@ -16,4 +16,5 @@
   -->
 <resources>
     <string name="app_name">Android Things Kuman SM9</string>
+    <string name="car_service_started">Car service started</string>
 </resources>

@@ -30,13 +30,13 @@ Features of the project:
 - [x] Open a bug report for I2C read not working for PWR.A53.A on Things 0.6.0-devpreviw
 - [x] Move the `sh1106` on a separate project and publish on maven
 - [ ] Add violation-comments-to-github-gradle-plugin and integrate it with TravisCI
-- [ ] Define and implement a communication protocol between Things app and Mobile app
-- [ ] Allow to control the motors via Mobile app
-- [ ] Allow to control the cradle servos via Mobile app
+- [x] Define and implement a communication protocol between Things app and Mobile app
+- [x] Allow to control the motors via Mobile app
+- [x] Allow to control the cradle servos via Mobile app
 - [ ] Release first alpha version
 - [ ] Create a dev branch and continue the development on that branch
 - [ ] Write Android Things driver for HD44780 LCD controller
-- [ ] Add support for Raspberry Pi Camera
+- [x] Add support for Raspberry Pi Camera
 - [ ] Stream camera to Mobile app
 - [ ] Add support for HC-SR04 (Ultrasonic Module Distance Measuring Transducer Sensor ) to `pwra53a` 
 - [ ] Add support for E18-D80NK (Adjustable Infrared Obstacle Avoidance Detection Sensor) to `pwra53a`

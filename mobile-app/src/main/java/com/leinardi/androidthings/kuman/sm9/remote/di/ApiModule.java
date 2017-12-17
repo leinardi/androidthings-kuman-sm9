@@ -18,28 +18,17 @@ package com.leinardi.androidthings.kuman.sm9.remote.di;
 
 import android.app.Application;
 
-import com.leinardi.androidthings.kuman.sm9.remote.MobileApp;
-import dagger.BindsInstance;
-import dagger.Component;
-import dagger.android.AndroidInjectionModule;
+import com.leinardi.androidthings.kuman.sm9.remote.api.GoogleApiClientRepository;
+import dagger.Module;
+import dagger.Provides;
 
 import javax.inject.Singleton;
 
-@Singleton
-@Component(modules = {
-        AndroidInjectionModule.class,
-        ApiModule.class,
-        AppModule.class,
-        MainActivityModule.class
-})
-public interface AppComponent {
-    @Component.Builder
-    interface Builder {
-        @BindsInstance
-        Builder application(Application application);
-
-        AppComponent build();
+@Module
+public class ApiModule {
+    @Singleton
+    @Provides
+    GoogleApiClientRepository provideGoogleApiClientRepository(Application application) {
+        return new GoogleApiClientRepository(application);
     }
-
-    void inject(MobileApp target);
 }

@@ -42,4 +42,11 @@ public class MobileMessage implements Serializable {
             return new MobileMessage(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "MobileMessage{" +
+                "mEightAxis=" + mEightAxis +
+                '}';
+    }
 }

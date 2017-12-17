@@ -16,17 +16,26 @@
 
 package com.leinardi.androidthings.kuman.sm9.ui;
 
+import android.app.Application;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 
 import com.leinardi.androidthings.kuman.sm9.R;
 import com.leinardi.androidthings.kuman.sm9.common.di.Injectable;
 import com.leinardi.androidthings.kuman.sm9.common.ui.BaseActivity;
 import com.leinardi.androidthings.kuman.sm9.databinding.MainActivityBinding;
+import com.leinardi.androidthings.kuman.sm9.service.CarService;
 import timber.log.Timber;
 
+import javax.inject.Inject;
+
 public class MainActivity extends BaseActivity<MainViewModel> implements Injectable {
+
+    @Inject
+    Application mApplication;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,6 +43,20 @@ public class MainActivity extends BaseActivity<MainViewModel> implements Injecta
         Timber.d("onCreate");
         MainActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.main_activity);
         binding.setViewModel(getViewModel());
+
+        startCarService();
+    }
+
+    private void startCarService() {
+        Intent startIntent = new Intent(mApplication, CarService.class);
+        startIntent.setAction(CarService.ACTION_START_CAR_SERVICE);
+        ContextCompat.startForegroundService(mApplication, startIntent);
+    }
+
+    private void stopCarService() {
+        Intent stopIntent = new Intent(mApplication, CarService.class);
+        stopIntent.setAction(CarService.ACTION_STOP_CAR_SERVICE);
+        ContextCompat.startForegroundService(mApplication, stopIntent);
     }
 
     @Override
@@ -44,6 +67,8 @@ public class MainActivity extends BaseActivity<MainViewModel> implements Injecta
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Timber.d("onDestroy");
+        if (isFinishing()) {
+            stopCarService();
+        }
     }
 }

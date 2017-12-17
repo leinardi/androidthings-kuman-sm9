@@ -19,29 +19,37 @@ package com.leinardi.androidthings.kuman.sm9.common.api.car;
 import java.io.Serializable;
 
 public class CameraCradlePosition implements Serializable {
-    public static final float MAX_ANGLE = 90;
-    public static final float MIN_ANGLE = MAX_ANGLE * -1;
-    private final float mHorizontalServoAngle;
-    private final float mVerticalServoAngle;
+    public static final int MAX_ANGLE = 90;
+    public static final int MIN_ANGLE = MAX_ANGLE * -1;
+    private final int mHorizontalServoAngle;
+    private final int mVerticalServoAngle;
 
-    public CameraCradlePosition(float horizontalServoAngle, float verticalServoAngle) {
+    public CameraCradlePosition(int horizontalServoAngle, int verticalServoAngle) {
         checkAngle(horizontalServoAngle);
         checkAngle(verticalServoAngle);
         mHorizontalServoAngle = horizontalServoAngle;
         mVerticalServoAngle = verticalServoAngle;
     }
 
-    public float getHorizontalServoAngle() {
+    public int getHorizontalServoAngle() {
         return mHorizontalServoAngle;
     }
 
-    public float getVerticalServoAngle() {
+    public int getVerticalServoAngle() {
         return mVerticalServoAngle;
     }
 
-    private void checkAngle(float angle) {
+    private void checkAngle(int angle) {
         if (angle < MIN_ANGLE || angle > MAX_ANGLE) {
             throw new IllegalArgumentException("Invalid angle value");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "CameraCradlePosition{" +
+                "mHorizontalServoAngle=" + mHorizontalServoAngle +
+                ", mVerticalServoAngle=" + mVerticalServoAngle +
+                '}';
     }
 }

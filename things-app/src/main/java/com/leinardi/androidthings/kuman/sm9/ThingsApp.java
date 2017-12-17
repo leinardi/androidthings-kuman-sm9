@@ -18,19 +18,23 @@ package com.leinardi.androidthings.kuman.sm9;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Service;
 
 import com.leinardi.androidthings.kuman.sm9.common.AwesomeDebugTree;
 import com.leinardi.androidthings.kuman.sm9.di.ThingsAppInjector;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
+import dagger.android.HasServiceInjector;
 import timber.log.Timber;
 
 import javax.inject.Inject;
 
-public class ThingsApp extends Application implements HasActivityInjector {
+public class ThingsApp extends Application implements HasActivityInjector, HasServiceInjector {
     @Inject
-    DispatchingAndroidInjector<Activity> mDispatchingAndroidInjector;
+    DispatchingAndroidInjector<Activity> mDispatchingAndroidInjectorActivity;
+    @Inject
+    DispatchingAndroidInjector<Service> mDispatchingAndroidInjectorService;
 
     @Override
     public void onCreate() {
@@ -43,6 +47,11 @@ public class ThingsApp extends Application implements HasActivityInjector {
 
     @Override
     public AndroidInjector<Activity> activityInjector() {
-        return mDispatchingAndroidInjector;
+        return mDispatchingAndroidInjectorActivity;
+    }
+
+    @Override
+    public AndroidInjector<Service> serviceInjector() {
+        return mDispatchingAndroidInjectorService;
     }
 }

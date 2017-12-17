@@ -46,8 +46,6 @@ import io.reactivex.subjects.BehaviorSubject;
 import org.apache.commons.lang3.SerializationUtils;
 import timber.log.Timber;
 
-import javax.inject.Inject;
-
 import static com.leinardi.androidthings.kuman.sm9.remote.api.GoogleApiClientRepository.ConnectionStatus.CONNECTED;
 import static com.leinardi.androidthings.kuman.sm9.remote.api.GoogleApiClientRepository.ConnectionStatus.CONNECTING;
 import static com.leinardi.androidthings.kuman.sm9.remote.api.GoogleApiClientRepository.ConnectionStatus.DISCONNECTED;
@@ -58,7 +56,6 @@ public class GoogleApiClientRepository extends BaseRepository {
     private GoogleApiClient mGoogleApiClient;
     private String mRemoteHostEndpoint;
 
-    @Inject
     public GoogleApiClientRepository(Application application) {
         mApplication = application;
         mConnectionBehaviorPublishSubject = BehaviorSubject.create();
@@ -196,14 +193,13 @@ public class GoogleApiClientRepository extends BaseRepository {
         Nearby.Connections.acceptConnection(mGoogleApiClient, endpointId, new PayloadCallback() {
             @Override
             public void onPayloadReceived(String endpointId, Payload payload) {
-                if (payload.getType() == Payload.Type.BYTES) {
-                    Timber.d("onPayloadReceived: %s", new String(payload.asBytes()));
-                }
+                Timber.d("onPayloadReceived");
             }
 
             @Override
             public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
                 // Provides updates about the progress of both incoming and outgoing payloads
+                Timber.d("onPayloadTransferUpdate status = %s", update.getStatus());
             }
         });
     }

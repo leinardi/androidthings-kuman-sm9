@@ -109,4 +109,17 @@ public class ThingsMessage implements Serializable {
             return new ThingsMessage(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "ThingsMessage{" +
+                "mCarMovement=" + mCarMovement +
+                ", mCameraCradlePosition=" + mCameraCradlePosition +
+                ", mStreaming=" + mStreaming +
+                ", mLockCameraPosition=" + mLockCameraPosition +
+                ", mAvoidCollisions=" + mAvoidCollisions +
+                ", mFollowLine=" + mFollowLine +
+                ", mClientDisconnecting=" + mClientDisconnecting +
+                '}';
+    }
 }

@@ -15,14 +15,7 @@
  */
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.leinardi.android.checkstyle'
-
-checkstyle {
-    ignoreFailures = false // Whether this task will ignore failures and continue running the build.
-    configFile rootProject.file('config/checkstyle/checkstyle.xml')
-    // The Checkstyle configuration file to use.
-    toolVersion = '8.4' // The version of Checkstyle you want to be used
-}
+apply from: rootProject.file('checkstyle.gradle')
 
 android {
     compileSdkVersion build_versions.target_sdk
@@ -32,8 +25,8 @@ android {
         applicationId "com.leinardi.androidthings.kuman.sm9"
         minSdkVersion 24
         targetSdkVersion build_versions.target_sdk
-        versionCode 1
-        versionName "1.0"
+        versionCode build_versions.version_code
+        versionName build_versions.version_name
         buildConfigField "String", "NEARBY_SERVICE_ID", "\"${NEARBY_SERVICE_ID}\""
     }
 
@@ -42,8 +35,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility build_versions.java_version
+        targetCompatibility build_versions.java_version
     }
 
     def isKeystoreInfoAvailable = file(KEYSTORE_PATH).exists() && file(KEYSTORE_PROPERTIES_PATH).exists()

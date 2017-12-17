@@ -170,6 +170,9 @@ def build_versions = [:]
 build_versions.min_sdk = 14
 build_versions.target_sdk = 26
 build_versions.build_tools = "26.0.2"
+build_versions.java_version = JavaVersion.VERSION_1_8
+build_versions.version_code = 'git rev-list --count HEAD'.execute().text.trim() as int
+build_versions.version_name = "0.1"
 ext.build_versions = build_versions
 
 

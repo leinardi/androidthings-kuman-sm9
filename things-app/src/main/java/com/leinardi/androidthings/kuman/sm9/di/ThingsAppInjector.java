@@ -16,11 +16,17 @@
 
 package com.leinardi.androidthings.kuman.sm9.di;
 
+import com.leinardi.androidthings.driver.pwra53a.PwrA53A;
+import com.leinardi.androidthings.driver.sh1106.Sh1106;
 import com.leinardi.androidthings.kuman.sm9.ThingsApp;
 import com.leinardi.androidthings.kuman.sm9.common.di.AppInjector;
+import timber.log.Timber;
+
+import java.io.IOException;
 
 public class ThingsAppInjector extends AppInjector<ThingsApp> {
     private static final ThingsAppInjector INSTANCE = new ThingsAppInjector();
+    private static final String RPI3_I2C_BUS_NAME = "I2C1";
 
     private ThingsAppInjector() {
     }
@@ -31,6 +37,25 @@ public class ThingsAppInjector extends AppInjector<ThingsApp> {
 
     @Override
     protected void injectApplication(ThingsApp application) {
-        DaggerAppComponent.builder().application(application).build().inject(application);
+        PwrA53A pwrA53A = null;
+        try {
+            pwrA53A = new PwrA53A(RPI3_I2C_BUS_NAME);
+        } catch (IOException e) {
+            Timber.e(e);
+        }
+
+        Sh1106 sh1106 = null;
+        try {
+            sh1106 = new Sh1106(RPI3_I2C_BUS_NAME);
+        } catch (IOException e) {
+            Timber.e(e);
+        }
+
+        DaggerAppComponent.builder()
+                .application(application)
+                .pwra53a(pwrA53A)
+                .sh1106(sh1106)
+                .build()
+                .inject(application);
     }
 }

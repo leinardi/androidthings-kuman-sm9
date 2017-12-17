@@ -33,9 +33,12 @@ import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
 import com.leinardi.androidthings.kuman.sm9.BuildConfig;
 import com.leinardi.androidthings.kuman.sm9.common.api.BaseRepository;
+import com.leinardi.androidthings.kuman.sm9.common.api.car.ThingsMessage;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.subjects.BehaviorSubject;
+import org.apache.commons.lang3.SerializationUtils;
 import timber.log.Timber;
 
-import javax.inject.Inject;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +47,11 @@ public class GoogleApiClientRepository extends BaseRepository {
     private final Application mApplication;
     private GoogleApiClient mGoogleApiClient;
     private List<String> mRemotePeerEndpoints = new ArrayList<>();
+    private final BehaviorSubject<ThingsMessage> mThingsMessageBehaviorSubject;
 
-    @Inject
     public GoogleApiClientRepository(Application application) {
         mApplication = application;
+        mThingsMessageBehaviorSubject = BehaviorSubject.create();
         setupGoogleApiClient();
     }
 
@@ -164,9 +168,11 @@ public class GoogleApiClientRepository extends BaseRepository {
 
     private void handleOnPayloadReceived(String endpointId, Payload payload) {
         if (payload.getType() == Payload.Type.BYTES) {
-            Timber.d("onPayloadReceived: " + new String(payload.asBytes()));
-            Nearby.Connections.sendPayload(mGoogleApiClient, endpointId, Payload.fromBytes("ACK".getBytes(Charset
-                    .forName("UTF-8"))));
+            mThingsMessageBehaviorSubject.onNext(SerializationUtils.deserialize(payload.asBytes()));
         }
+    }
+
+    public void subscribeToThingsMessage(DisposableObserver<ThingsMessage> observer) {
+        getCompositeDisposable().add(mThingsMessageBehaviorSubject.subscribeWith(observer));
     }
 }

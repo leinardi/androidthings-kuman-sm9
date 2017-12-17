@@ -19,20 +19,20 @@ package com.leinardi.androidthings.kuman.sm9.common.api.car;
 import java.io.Serializable;
 
 public class CarMovement implements Serializable {
-    public static final float MAX_ANGLE = 180;
-    public static final float MIN_ANGLE = MAX_ANGLE * -1;
+    public static final int MAX_ANGLE = 180;
+    public static final int MIN_ANGLE = MAX_ANGLE * -1;
     public static final int MIN_POWER = 0;
     public static final int MAX_POWER = 100;
-    private final float mAngle;
+    private final int mAngle;
     private final int mPower;
 
-    public CarMovement(float angle, int power) {
+    public CarMovement(int angle, int power) {
         checkAngle(angle);
         mAngle = angle;
         mPower = power;
     }
 
-    public float getAngle() {
+    public int getAngle() {
         return mAngle;
     }
 
@@ -40,7 +40,7 @@ public class CarMovement implements Serializable {
         return mPower;
     }
 
-    private void checkAngle(float angle) {
+    private void checkAngle(int angle) {
         if (angle < MIN_ANGLE || angle > MAX_ANGLE) {
             throw new IllegalArgumentException("Invalid angle value");
         }
@@ -50,5 +50,13 @@ public class CarMovement implements Serializable {
         if (power < MIN_POWER || power > MAX_POWER) {
             throw new IllegalArgumentException("Invalid power value");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "CarMovement{" +
+                "mAngle=" + mAngle +
+                ", mPower=" + mPower +
+                '}';
     }
 }

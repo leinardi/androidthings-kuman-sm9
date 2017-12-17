@@ -24,13 +24,18 @@ import com.leinardi.androidthings.kuman.sm9.common.ui.BaseViewModel;
 import com.leinardi.androidthings.kuman.sm9.remote.api.GoogleApiClientRepository;
 import com.leinardi.androidthings.kuman.sm9.remote.api.GoogleApiClientRepository.NearbyConnectionsStatusUpdate;
 import io.reactivex.observers.DisposableObserver;
+import io.reactivex.subjects.PublishSubject;
 import timber.log.Timber;
 
 import javax.inject.Inject;
+import java.util.concurrent.TimeUnit;
 
 public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
     private static final int ANGLE_STEP = 5;
     private static final int POWER_STEP = 10;
+    private static final int SAMPLE_PERIOD_IN_MILLIS = 500;
+    private final PublishSubject<ThingsMessage> mCarThingsMessagePublishSubject;
+    private final PublishSubject<ThingsMessage> mCameraThingsMessagePublishSubject;
     private GoogleApiClientRepository mGoogleApiClientRepository;
 
     @Inject
@@ -55,6 +60,13 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
 
             }
         });
+
+        mCarThingsMessagePublishSubject = PublishSubject.create();
+        mCarThingsMessagePublishSubject.sample(SAMPLE_PERIOD_IN_MILLIS, TimeUnit.MILLISECONDS)
+                .subscribe(message -> mGoogleApiClientRepository.sendMessage(message), Timber::e);
+        mCameraThingsMessagePublishSubject = PublishSubject.create();
+        mCameraThingsMessagePublishSubject.sample(SAMPLE_PERIOD_IN_MILLIS, TimeUnit.MILLISECONDS)
+                .subscribe(message -> mGoogleApiClientRepository.sendMessage(message), Timber::e);
     }
 
     @Override
@@ -87,7 +99,7 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
                 if (steppedAngle != mSteppedAngle || steppedPower != mSteppedPower || direction == JoyStick.DIRECTION_CENTER) {
                     Timber.d("angle = %d (%f), power = %d", steppedAngle, angle, steppedPower);
                     ThingsMessage message = new ThingsMessage.Builder().setCarMovement(new CarMovement(steppedAngle, steppedPower)).build();
-                    mGoogleApiClientRepository.sendMessage(message);
+                    mCarThingsMessagePublishSubject.onNext(message);
                     mSteppedAngle = steppedAngle;
                     mSteppedPower = steppedPower;
                 }
@@ -120,7 +132,7 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
                     Timber.d("verticalAngle = %d, horizontalAngle = %d", verticalAngle, horizontalAngle);
                     ThingsMessage message = new ThingsMessage.Builder().setCameraCradlePosition(
                             new CameraCradlePosition(horizontalAngle, verticalAngle)).build();
-                    mGoogleApiClientRepository.sendMessage(message);
+                    mCameraThingsMessagePublishSubject.onNext(message);
                     mVerticalAngle = horizontalAngle;
                     mHorizontalAngle = verticalAngle;
                 }

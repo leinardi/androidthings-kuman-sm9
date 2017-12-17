@@ -24,10 +24,13 @@ import com.google.android.things.pio.PeripheralManagerService;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class PwrA53A implements AutoCloseable {
     private static final String TAG = PwrA53A.class.getSimpleName();
+    private static final String DISABLE_I2C_REPEATED_START_COMMAND = "echo -n %d > /sys/module/i2c_bcm2708/parameters/combined";
+    private static final String GET_I2C_REPEATED_START_COMMAND = "cat /sys/module/i2c_bcm2708/parameters/combined";
     private final String mI2cName;
     /**
      * Default I2C address for the sensor.
@@ -47,8 +50,8 @@ public class PwrA53A implements AutoCloseable {
     public static final int SERVO_ID_4 = 4;
     public static final int SERVO_ID_5 = 5;
     public static final int SERVO_ID_6 = 6;
-    public static final int SERVO_ID_7 = 7;
-    public static final int SERVO_ID_8 = 8;
+    public static final int SERVO_ID_7 = 7; // Vertical servo
+    public static final int SERVO_ID_8 = 8; // Horizontal servo
 
     // GPIO LEDs
     private static final String PWR_A53_A_LED0 = "BCM10";
@@ -68,8 +71,8 @@ public class PwrA53A implements AutoCloseable {
     private static final String PWR_A53_A_SER2 = "BCM8";
     private static final String PWR_A53_A_SER3 = "BCM7";
     private static final String PWR_A53_A_SER4 = "BCM5";
-    private static final String PWR_A53_A_SER7 = "BCM6"; // Vertical servo
-    private static final String PWR_A53_A_SER8 = "BCM12"; // Horizontal servo
+    private static final String PWR_A53_A_SER7 = "BCM6";
+    private static final String PWR_A53_A_SER8 = "BCM12";
 
     // GPIO Ultrasound
     private static final String PWR_A53_A_ECHO = "BCM4";
@@ -98,7 +101,7 @@ public class PwrA53A implements AutoCloseable {
         } catch (IOException | RuntimeException e) {
             try {
                 close();
-            } catch (IOException | RuntimeException ignored) {
+            } catch (RuntimeException ignored) {
             }
             throw e;
         }
@@ -309,7 +312,7 @@ public class PwrA53A implements AutoCloseable {
      * Close the driver and the underlying device.
      */
     @Override
-    public void close() throws IOException {
+    public void close() {
         try {
             mI2cDevice.close();
         } catch (IOException e) {
@@ -325,5 +328,30 @@ public class PwrA53A implements AutoCloseable {
 
         mI2cDevice = null;
         mGpioMap.clear();
+    }
+
+    /**
+     * Enable/Disable I2C repeated start.
+     * <p>
+     * More info: https://www.i2c-bus.org/repeated-start-condition/
+     *
+     * @param enabled true to enable the repeated start, false otherwise
+     * @return true if the command was executed successfully, false otherwise
+     */
+    public boolean setI2CRepeatedStart(boolean enabled) {
+        if (!ShellInterface.isSuAvailable()) {
+            return false;
+        } else {
+            ShellInterface.runCommand(String.format(Locale.US, DISABLE_I2C_REPEATED_START_COMMAND, enabled ? 1 : 0));
+            return isI2CRepeatedStartEnabled() == enabled;
+        }
+    }
+
+    public Boolean isI2CRepeatedStartEnabled() {
+        if (!ShellInterface.isSuAvailable()) {
+            return null;
+        } else {
+            return "1".equals(ShellInterface.getProcessOutput(GET_I2C_REPEATED_START_COMMAND));
+        }
     }
 }

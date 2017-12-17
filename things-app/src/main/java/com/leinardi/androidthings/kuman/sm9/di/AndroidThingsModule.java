@@ -16,41 +16,30 @@
 
 package com.leinardi.androidthings.kuman.sm9.di;
 
-import android.app.Application;
 import android.support.annotation.Nullable;
 
 import com.leinardi.androidthings.driver.pwra53a.PwrA53A;
 import com.leinardi.androidthings.driver.sh1106.Sh1106;
-import com.leinardi.androidthings.kuman.sm9.ThingsApp;
-import dagger.BindsInstance;
-import dagger.Component;
-import dagger.android.AndroidInjectionModule;
+import com.leinardi.androidthings.kuman.sm9.controller.MotorServoBoardController;
+import com.leinardi.androidthings.kuman.sm9.controller.OledDisplayController;
+import com.leinardi.androidthings.kuman.sm9.controller.PwrA53AMotorServoBoardController;
+import com.leinardi.androidthings.kuman.sm9.controller.Sh1106OledDisplayController;
+import dagger.Module;
+import dagger.Provides;
 
 import javax.inject.Singleton;
 
-@Singleton
-@Component(modules = {
-        AndroidInjectionModule.class,
-        AndroidThingsModule.class,
-        ApiModule.class,
-        AppModule.class,
-        CarServiceModule.class,
-        MainActivityModule.class
-})
-public interface AppComponent {
-    @Component.Builder
-    interface Builder {
-        @BindsInstance
-        Builder application(Application application);
-
-        @BindsInstance
-        Builder pwra53a(@Nullable PwrA53A pwrA53A);
-
-        @BindsInstance
-        Builder sh1106(@Nullable Sh1106 sh1106);
-
-        AppComponent build();
+@Module
+public class AndroidThingsModule {
+    @Singleton
+    @Provides
+    MotorServoBoardController provideGoogleApiClientRepository(@Nullable PwrA53A pwrA53A) {
+        return new PwrA53AMotorServoBoardController(pwrA53A);
     }
 
-    void inject(ThingsApp target);
+    @Singleton
+    @Provides
+    OledDisplayController provideOledDisplayController(@Nullable Sh1106 sh1106) {
+        return new Sh1106OledDisplayController(sh1106);
+    }
 }
