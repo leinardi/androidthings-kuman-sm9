@@ -21,9 +21,10 @@ import android.support.annotation.Nullable;
 import com.leinardi.androidthings.driver.pwra53a.PwrA53A;
 import com.leinardi.androidthings.driver.sh1106.Sh1106;
 import com.leinardi.androidthings.kuman.sm9.controller.MotorServoBoardController;
-import com.leinardi.androidthings.kuman.sm9.controller.OledDisplayController;
 import com.leinardi.androidthings.kuman.sm9.controller.PwrA53AMotorServoBoardController;
-import com.leinardi.androidthings.kuman.sm9.controller.Sh1106OledDisplayController;
+import com.leinardi.androidthings.kuman.sm9.controller.oled.OledDisplayController;
+import com.leinardi.androidthings.kuman.sm9.controller.oled.OledDisplayHelper;
+import com.leinardi.androidthings.kuman.sm9.controller.oled.Sh1106OledDisplayController;
 import dagger.Module;
 import dagger.Provides;
 
@@ -33,13 +34,13 @@ import javax.inject.Singleton;
 public class AndroidThingsModule {
     @Singleton
     @Provides
-    MotorServoBoardController provideGoogleApiClientRepository(@Nullable PwrA53A pwrA53A) {
+    MotorServoBoardController provideMotorServoBoardController(@Nullable PwrA53A pwrA53A) {
         return new PwrA53AMotorServoBoardController(pwrA53A);
     }
 
     @Singleton
     @Provides
-    OledDisplayController provideOledDisplayController(@Nullable Sh1106 sh1106) {
-        return new Sh1106OledDisplayController(sh1106);
+    OledDisplayController provideOledDisplayController(@Nullable Sh1106 sh1106, OledDisplayHelper oledDisplayHelper) {
+        return new Sh1106OledDisplayController(sh1106, oledDisplayHelper);
     }
 }

@@ -24,7 +24,6 @@ import com.google.android.things.pio.PeripheralManagerService;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class PwrA53A implements AutoCloseable {
@@ -328,30 +327,5 @@ public class PwrA53A implements AutoCloseable {
 
         mI2cDevice = null;
         mGpioMap.clear();
-    }
-
-    /**
-     * Enable/Disable I2C repeated start.
-     * <p>
-     * More info: https://www.i2c-bus.org/repeated-start-condition/
-     *
-     * @param enabled true to enable the repeated start, false otherwise
-     * @return true if the command was executed successfully, false otherwise
-     */
-    public boolean setI2CRepeatedStart(boolean enabled) {
-        if (!ShellInterface.isSuAvailable()) {
-            return false;
-        } else {
-            ShellInterface.runCommand(String.format(Locale.US, DISABLE_I2C_REPEATED_START_COMMAND, enabled ? 1 : 0));
-            return isI2CRepeatedStartEnabled() == enabled;
-        }
-    }
-
-    public Boolean isI2CRepeatedStartEnabled() {
-        if (!ShellInterface.isSuAvailable()) {
-            return null;
-        } else {
-            return "1".equals(ShellInterface.getProcessOutput(GET_I2C_REPEATED_START_COMMAND));
-        }
     }
 }

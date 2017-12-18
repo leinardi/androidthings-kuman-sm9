@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.leinardi.androidthings.kuman.sm9.controller;
+package com.leinardi.androidthings.kuman.sm9.controller.oled;
 
-import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 
 import com.leinardi.androidthings.driver.sh1106.BitmapHelper;
@@ -27,8 +26,10 @@ import java.io.IOException;
 
 public class Sh1106OledDisplayController implements OledDisplayController {
     private Sh1106 mSh1106;
+    private OledDisplayHelper mOledDisplayHelper;
 
-    public Sh1106OledDisplayController(@Nullable Sh1106 sh1106) {
+    public Sh1106OledDisplayController(@Nullable Sh1106 sh1106, OledDisplayHelper oledDisplayHelper) {
+        mOledDisplayHelper = oledDisplayHelper;
         if (sh1106 == null) {
             throw new IllegalStateException("Unable to get the instance of Sh1106");
         }
@@ -36,10 +37,10 @@ public class Sh1106OledDisplayController implements OledDisplayController {
     }
 
     @Override
-    public void showBitmap(Bitmap bitmap) {
+    public void refreshDisplay() {
         try {
             mSh1106.clearPixels();
-            BitmapHelper.setBmpData(mSh1106, 0, 0, bitmap, false);
+            BitmapHelper.setBmpData(mSh1106, 0, 0, mOledDisplayHelper.getDisplayBitmap(), false);
             mSh1106.show(); // render the pixel data
         } catch (IOException e) {
             Timber.e(e);

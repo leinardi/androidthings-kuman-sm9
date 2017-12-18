@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package com.leinardi.androidthings.kuman.sm9.controller;
+package com.leinardi.androidthings.kuman.sm9.controller.oled;
 
-import android.graphics.Bitmap;
+import com.leinardi.androidthings.kuman.sm9.controller.BaseController;
 
 public interface OledDisplayController extends BaseController {
     /**
-     * Shows a bitmap image to LCD screen.
-     *
-     * @param bitmap The bitmap image that you want to show to screen.
+     * Updates the LCD screen with new data.
      */
-    void showBitmap(Bitmap bitmap);
+    void refreshDisplay();
 
     /**
      * Sets the contrast for the display.

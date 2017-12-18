@@ -16,17 +16,16 @@
 
 package com.leinardi.androidthings.kuman.sm9.controller;
 
-import android.app.Application;
-import android.graphics.BitmapFactory;
-
-import com.leinardi.androidthings.kuman.sm9.R;
 import com.leinardi.androidthings.kuman.sm9.api.GoogleApiClientRepository;
 import com.leinardi.androidthings.kuman.sm9.common.api.car.ThingsMessage;
+import com.leinardi.androidthings.kuman.sm9.controller.oled.OledDisplayController;
+import io.reactivex.Observable;
 import io.reactivex.observers.DisposableObserver;
 import timber.log.Timber;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class CarController implements BaseController {
@@ -37,13 +36,16 @@ public class CarController implements BaseController {
     @Inject
     public CarController(GoogleApiClientRepository googleApiClientRepository,
                          MotorServoBoardController motorServoBoardController,
-                         OledDisplayController oledDisplayController,
-                         Application application) {
+                         OledDisplayController oledDisplayController) {
         mGoogleApiClientRepository = googleApiClientRepository;
         mMotorServoBoardController = motorServoBoardController;
         mOledDisplayController = oledDisplayController;
+        Observable.interval(2, TimeUnit.SECONDS).subscribe(tick -> refresh());
 
-        mOledDisplayController.showBitmap(BitmapFactory.decodeResource(application.getResources(), R.drawable.test_inv));
+    }
+
+    private void refresh() {
+        mOledDisplayController.refreshDisplay();
     }
 
     public void start() {
