@@ -33,8 +33,10 @@ Features of the project:
 - [x] Define and implement a communication protocol between Things app and Mobile app
 - [x] Allow to control the motors via Mobile app
 - [x] Allow to control the cradle servos via Mobile app
+- [ ] Try to set PWM form pin 18 to pin 20 changing the config.txt
 - [ ] Release first alpha version
 - [ ] Create a dev branch and continue the development on that branch
+- [ ] Set Things locale and time format accordingly to Mobile app
 - [ ] Write Android Things driver for HD44780 LCD controller
 - [x] Add support for Raspberry Pi Camera
 - [ ] Stream camera to Mobile app
