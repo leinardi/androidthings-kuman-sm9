@@ -43,7 +43,7 @@ Features of the project:
 - [ ] Add support for HC-SR04 (Ultrasonic Module Distance Measuring Transducer Sensor ) to `pwra53a` 
 - [ ] Add support for E18-D80NK (Adjustable Infrared Obstacle Avoidance Detection Sensor) to `pwra53a`
 - [ ] Write Android Things driver for Adafruit LSM9DS1 (Accelerometer, Gyro, Magnetometer and Temperature sensor) 
-- [x] Show CPU usage and temperature and interfaces IP on SH1106
+- [x] Show CPU usage, CPU temperature and interfaces IP on SH1106
 - [ ] Show current status (stop, moving forward, following path, etc) on HD44780
 - [ ] Use HC-SR04 to avoid collisions
 - [ ] Use E18-D80NK to implement follow path
@@ -104,4 +104,4 @@ the License.
 
 The FontStruction "[Graph 35+ pix](https://fontstruct.com/fontstructions/show/664062/graph_35_pix)"
  by [30100flo](https://fontstruct.com/fontstructors/623307/30100flo) is licensed
-under a [Creative Commons Attribution Share Alike](http://creativecommons.org/licenses/by-sa/3.0/) license.
+under a [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/) license.

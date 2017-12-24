@@ -21,6 +21,7 @@ import android.util.Log;
 import com.google.android.things.pio.Gpio;
 import com.google.android.things.pio.I2cDevice;
 import com.google.android.things.pio.PeripheralManagerService;
+import com.google.android.things.pio.Pwm;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -28,8 +29,9 @@ import java.util.Map;
 
 public class PwrA53A implements AutoCloseable {
     private static final String TAG = PwrA53A.class.getSimpleName();
-    private static final String DISABLE_I2C_REPEATED_START_COMMAND = "echo -n %d > /sys/module/i2c_bcm2708/parameters/combined";
-    private static final String GET_I2C_REPEATED_START_COMMAND = "cat /sys/module/i2c_bcm2708/parameters/combined";
+    private static final int THROTTLE_MIN = 0;
+    private static final int THROTTLE_MAX = 100;
+    private static final int PWM_FREQUENCY_HZ = 1000;
     private final String mI2cName;
     /**
      * Default I2C address for the sensor.
@@ -57,15 +59,19 @@ public class PwrA53A implements AutoCloseable {
     private static final String PWR_A53_A_LED1 = "BCM9";
     private static final String PWR_A53_A_LED2 = "BCM25";
 
-    //GPIO Motors
-    private static final String PWR_A53_A_ENA = "BCM13";
-    private static final String PWR_A53_A_ENB = "BCM20";
+    // PWM Motors
+    private static final String PWR_A53_A_ENA_PWM = "PWM1";
+    private static final String PWR_A53_A_ENB_PWM = "PWM0";
+
+    // GPIO Motors
+    private static final String PWR_A53_A_ENA_GPIO = "BCM13";
+    private static final String PWR_A53_A_ENB_GPIO = "BCM20";
     private static final String PWR_A53_A_IN1 = "BCM19";
     private static final String PWR_A53_A_IN2 = "BCM16";
     private static final String PWR_A53_A_IN3 = "BCM21";
     private static final String PWR_A53_A_IN4 = "BCM26";
 
-    //GPIO Servos
+    // GPIO Servos
     private static final String PWR_A53_A_SER1 = "BCM11";
     private static final String PWR_A53_A_SER2 = "BCM8";
     private static final String PWR_A53_A_SER3 = "BCM7";
@@ -85,7 +91,10 @@ public class PwrA53A implements AutoCloseable {
     private static final String PWR_A53_A_IRF_L = "BCM24";
 
     private I2cDevice mI2cDevice;
+    private Pwm mPwmEnA;
+    private Pwm mPwmEnB;
     private final Map<String, Gpio> mGpioMap;
+    private boolean mUsePwm;
 
     /**
      * Create a new PWR.A53.A sensor driver connected on the given bus.
@@ -116,13 +125,6 @@ public class PwrA53A implements AutoCloseable {
         mGpioMap.put(PWR_A53_A_LED1, pioService.openGpio(PWR_A53_A_LED1));
         mGpioMap.put(PWR_A53_A_LED2, pioService.openGpio(PWR_A53_A_LED2));
 
-        mGpioMap.put(PWR_A53_A_ENA, pioService.openGpio(PWR_A53_A_ENA));
-        mGpioMap.put(PWR_A53_A_IN1, pioService.openGpio(PWR_A53_A_IN1));
-        mGpioMap.put(PWR_A53_A_IN2, pioService.openGpio(PWR_A53_A_IN2));
-        mGpioMap.put(PWR_A53_A_ENB, pioService.openGpio(PWR_A53_A_ENB));
-        mGpioMap.put(PWR_A53_A_IN3, pioService.openGpio(PWR_A53_A_IN3));
-        mGpioMap.put(PWR_A53_A_IN4, pioService.openGpio(PWR_A53_A_IN4));
-
         mGpioMap.put(PWR_A53_A_IR_R, pioService.openGpio(PWR_A53_A_IR_R));
         mGpioMap.put(PWR_A53_A_IR_L, pioService.openGpio(PWR_A53_A_IR_L));
         mGpioMap.put(PWR_A53_A_IR_M, pioService.openGpio(PWR_A53_A_IR_M));
@@ -132,15 +134,33 @@ public class PwrA53A implements AutoCloseable {
         mGpioMap.put(PWR_A53_A_TRIG, pioService.openGpio(PWR_A53_A_TRIG));
         mGpioMap.put(PWR_A53_A_ECHO, pioService.openGpio(PWR_A53_A_ECHO));
 
+        mUsePwm = tryToOpenPwm(pioService);
+
+        if (!mUsePwm) {
+            mGpioMap.put(PWR_A53_A_ENA_GPIO, pioService.openGpio(PWR_A53_A_ENA_GPIO));
+            mGpioMap.put(PWR_A53_A_ENB_GPIO, pioService.openGpio(PWR_A53_A_ENB_GPIO));
+        }
+        mGpioMap.put(PWR_A53_A_IN1, pioService.openGpio(PWR_A53_A_IN1));
+        mGpioMap.put(PWR_A53_A_IN2, pioService.openGpio(PWR_A53_A_IN2));
+        mGpioMap.put(PWR_A53_A_IN3, pioService.openGpio(PWR_A53_A_IN3));
+        mGpioMap.put(PWR_A53_A_IN4, pioService.openGpio(PWR_A53_A_IN4));
+
         // Setup GPIO
         getGpio(PWR_A53_A_LED0).setDirection(Gpio.DIRECTION_OUT_INITIALLY_HIGH);
         getGpio(PWR_A53_A_LED1).setDirection(Gpio.DIRECTION_OUT_INITIALLY_HIGH);
         getGpio(PWR_A53_A_LED2).setDirection(Gpio.DIRECTION_OUT_INITIALLY_HIGH);
 
-        getGpio(PWR_A53_A_ENA).setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
+        if (!mUsePwm) {
+            getGpio(PWR_A53_A_ENA_GPIO).setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
+            getGpio(PWR_A53_A_ENB_GPIO).setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
+        } else {
+            mPwmEnA.setPwmFrequencyHz(PWM_FREQUENCY_HZ);
+            mPwmEnB.setPwmFrequencyHz(PWM_FREQUENCY_HZ);
+            setPwmThrottle(mPwmEnA, 0);
+            setPwmThrottle(mPwmEnB, 0);
+        }
         getGpio(PWR_A53_A_IN1).setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
         getGpio(PWR_A53_A_IN2).setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
-        getGpio(PWR_A53_A_ENB).setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
         getGpio(PWR_A53_A_IN3).setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
         getGpio(PWR_A53_A_IN4).setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
 
@@ -160,37 +180,76 @@ public class PwrA53A implements AutoCloseable {
         getGpio(PWR_A53_A_ECHO).setActiveType(Gpio.ACTIVE_HIGH);
     }
 
+    /**
+     * Tries to open the PWM devices.
+     * Currently Android Things doesn't allow to set custom pins for the PWM and the PWR.A53.A
+     * is expecting to get it on pin 20 and pin 13. Unfortunately Android uses pin 18 and 13.
+     * If you want to use PWM with this board please star this issue:
+     * https://issuetracker.google.com/issues/70115494
+     */
+    private boolean tryToOpenPwm(PeripheralManagerService pioService) {
+        try {
+            mPwmEnB = pioService.openPwm(PWR_A53_A_ENB_PWM);
+            mPwmEnA = pioService.openPwm(PWR_A53_A_ENA_PWM);
+            return true;
+        } catch (IOException e) {
+            Log.e(TAG, "Unable to open PWMs, falling back to GPIO", e);
+            try {
+                if (mPwmEnA != null) {
+                    mPwmEnA.close();
+                }
+                if (mPwmEnB != null) {
+                    mPwmEnB.close();
+                }
+            } catch (IOException ignored) {
+                // NO-OP
+            }
+        }
+        return false;
+    }
+
+    private void setPwmThrottle(Pwm pwm, int throttle) throws IOException {
+        if (throttle < THROTTLE_MIN || throttle > THROTTLE_MAX) {
+            throw new IllegalArgumentException("Throttle must be between 0 and 100. Throttle: " + throttle);
+        }
+        if (pwm == null) {
+            throw new IllegalStateException("PWM Device not open");
+        }
+        pwm.setPwmDutyCycle(throttle);
+        pwm.setEnabled(throttle != 0);
+    }
+
     public int getServoAngle(int servoId) throws IOException, IllegalStateException {
-        return byteToUnsignedInt(getI2cDevice().readRegByte(servoId));
+        return readRegByte(servoId) & 0xFF;
     }
 
     public void setServoAngle(int servoId, int angle) throws IOException, IllegalStateException {
         Log.d(TAG, "Set servoId " + servoId + " to angle " + angle);
-        getI2cDevice().writeRegByte(PWR_A53_A_REG_SERVO, (byte) servoId);
-        getI2cDevice().writeRegByte(angle, (byte) 255);
+        writeRegByte(PWR_A53_A_REG_SERVO, (byte) servoId);
+        writeRegByte(angle, (byte) 255);
     }
 
     public void resetServo() throws IOException, IllegalStateException {
-        getI2cDevice().writeRegByte(PWR_A53_A_REG_SERVO, (byte) 0);
-        getI2cDevice().writeRegByte(1, (byte) 255);
+        writeRegByte(PWR_A53_A_REG_SERVO, (byte) 0);
+        writeRegByte(1, (byte) 255);
     }
 
     public void saveServo() throws IOException, IllegalStateException {
-        getI2cDevice().writeRegByte(PWR_A53_A_REG_SERVO, (byte) 17);
-        getI2cDevice().writeRegByte(1, (byte) 255);
+        writeRegByte(PWR_A53_A_REG_SERVO, (byte) 17);
+        writeRegByte(1, (byte) 255);
     }
 
     public int getVoltage() throws IOException, IllegalStateException {
         Log.d(TAG, "Get Voltage ");
-        return byteToUnsignedInt(getI2cDevice().readRegByte(PWR_A53_A_REG_VOLTAGE));
+        return readRegByte(PWR_A53_A_REG_VOLTAGE) & 0xFF;
     }
 
     public int getSpeedCounter1() throws IOException, IllegalStateException {
-        return byteToUnsignedInt(getI2cDevice().readRegByte(PWR_A53_A_REG_SPEED_COUNTER_1));
+        return readRegByte(PWR_A53_A_REG_SPEED_COUNTER_1) & 0xFF;
     }
 
     public int getSpeedCounter2() throws IOException, IllegalStateException {
-        return byteToUnsignedInt(getI2cDevice().readRegByte(PWR_A53_A_REG_SPEED_COUNTER_2));
+        return readRegByte(PWR_A53_A_REG_SPEED_COUNTER_2) & 0xFF;
     }
 
     /**
@@ -230,8 +289,13 @@ public class PwrA53A implements AutoCloseable {
 
     public void motorForward() throws IOException, IllegalStateException {
         Log.d(TAG, "Motor Forward");
-        getGpio(PWR_A53_A_ENA).setValue(true);
-        getGpio(PWR_A53_A_ENB).setValue(true);
+        if (mUsePwm) {
+            setPwmThrottle(mPwmEnA, THROTTLE_MAX);
+            setPwmThrottle(mPwmEnB, THROTTLE_MAX);
+        } else {
+            getGpio(PWR_A53_A_ENA_GPIO).setValue(true);
+            getGpio(PWR_A53_A_ENB_GPIO).setValue(true);
+        }
         getGpio(PWR_A53_A_IN1).setValue(true);
         getGpio(PWR_A53_A_IN2).setValue(false);
         getGpio(PWR_A53_A_IN3).setValue(true);
@@ -242,8 +306,13 @@ public class PwrA53A implements AutoCloseable {
 
     public void motorBackward() throws IOException, IllegalStateException {
         Log.d(TAG, "Motor Backward");
-        getGpio(PWR_A53_A_ENA).setValue(true);
-        getGpio(PWR_A53_A_ENB).setValue(true);
+        if (mUsePwm) {
+            setPwmThrottle(mPwmEnA, THROTTLE_MAX);
+            setPwmThrottle(mPwmEnB, THROTTLE_MAX);
+        } else {
+            getGpio(PWR_A53_A_ENA_GPIO).setValue(true);
+            getGpio(PWR_A53_A_ENB_GPIO).setValue(true);
+        }
         getGpio(PWR_A53_A_IN1).setValue(false);
         getGpio(PWR_A53_A_IN2).setValue(true);
         getGpio(PWR_A53_A_IN3).setValue(false);
@@ -254,8 +323,13 @@ public class PwrA53A implements AutoCloseable {
 
     public void motorTurnLeft() throws IOException, IllegalStateException {
         Log.d(TAG, "Motor Turn Left");
-        getGpio(PWR_A53_A_ENA).setValue(true);
-        getGpio(PWR_A53_A_ENB).setValue(true);
+        if (mUsePwm) {
+            setPwmThrottle(mPwmEnA, THROTTLE_MAX);
+            setPwmThrottle(mPwmEnB, THROTTLE_MAX);
+        } else {
+            getGpio(PWR_A53_A_ENA_GPIO).setValue(true);
+            getGpio(PWR_A53_A_ENB_GPIO).setValue(true);
+        }
         getGpio(PWR_A53_A_IN1).setValue(true);
         getGpio(PWR_A53_A_IN2).setValue(false);
         getGpio(PWR_A53_A_IN3).setValue(false);
@@ -266,8 +340,13 @@ public class PwrA53A implements AutoCloseable {
 
     public void motorTurnRight() throws IOException, IllegalStateException {
         Log.d(TAG, "Motor Turn Right");
-        getGpio(PWR_A53_A_ENA).setValue(true);
-        getGpio(PWR_A53_A_ENB).setValue(true);
+        if (mUsePwm) {
+            setPwmThrottle(mPwmEnA, THROTTLE_MAX);
+            setPwmThrottle(mPwmEnB, THROTTLE_MAX);
+        } else {
+            getGpio(PWR_A53_A_ENA_GPIO).setValue(true);
+            getGpio(PWR_A53_A_ENB_GPIO).setValue(true);
+        }
         getGpio(PWR_A53_A_IN1).setValue(false);
         getGpio(PWR_A53_A_IN2).setValue(true);
         getGpio(PWR_A53_A_IN3).setValue(true);
@@ -278,8 +357,13 @@ public class PwrA53A implements AutoCloseable {
 
     public void motorStop() throws IOException, IllegalStateException {
         Log.d(TAG, "Motor Stop");
-        getGpio(PWR_A53_A_ENA).setValue(false);
-        getGpio(PWR_A53_A_ENB).setValue(false);
+        if (mUsePwm) {
+            setPwmThrottle(mPwmEnA, THROTTLE_MIN);
+            setPwmThrottle(mPwmEnB, THROTTLE_MIN);
+        } else {
+            getGpio(PWR_A53_A_ENA_GPIO).setValue(false);
+            getGpio(PWR_A53_A_ENB_GPIO).setValue(false);
+        }
         getGpio(PWR_A53_A_IN1).setValue(false);
         getGpio(PWR_A53_A_IN2).setValue(false);
         getGpio(PWR_A53_A_IN3).setValue(false);
@@ -303,8 +387,35 @@ public class PwrA53A implements AutoCloseable {
         return gpio;
     }
 
-    public static int byteToUnsignedInt(byte x) {
-        return x & 0xFF;
+    /**
+     * Read a byte from a given register.
+     *
+     * @param reg The register to read from (0x00-0xFF).
+     * @return
+     */
+    private byte readRegByte(int reg) throws IOException {
+        if (reg < 0 || reg > 0xFF) {
+            throw new IllegalArgumentException("The register must be between 0x00-0xFF. Register:" + reg);
+        }
+        byte[] buffer = {(byte) (reg & 0xFF)};
+        getI2cDevice().write(buffer, 1);
+        buffer[0] = 0;
+        getI2cDevice().read(buffer, 1);
+        return buffer[0];
+    }
+
+    /**
+     * Write a byte to a given register.
+     *
+     * @param reg  The register to write to (0x00-0xFF).
+     * @param data Value to write
+     */
+    private void writeRegByte(int reg, byte data) throws IOException {
+        if (reg < 0 || reg > 0xFF) {
+            throw new IllegalArgumentException("The register must be between 0x00-0xFF. Register:" + reg);
+        }
+        byte[] buffer = {(byte) (reg & 0xFF), data};
+        getI2cDevice().write(buffer, buffer.length);
     }
 
     /**
@@ -315,7 +426,19 @@ public class PwrA53A implements AutoCloseable {
         try {
             mI2cDevice.close();
         } catch (IOException e) {
-            Log.w(TAG, "Unable to close I2C device", e);
+            Log.w(TAG, "Unable to close PWM device", e);
+        }
+        if (mUsePwm) {
+            try {
+                mPwmEnA.close();
+            } catch (IOException e) {
+                Log.w(TAG, "Unable to close PWM device", e);
+            }
+            try {
+                mPwmEnB.close();
+            } catch (IOException e) {
+                Log.w(TAG, "Unable to close PWM device", e);
+            }
         }
         for (Gpio gpio : mGpioMap.values()) {
             try {
