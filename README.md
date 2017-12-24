@@ -33,7 +33,7 @@ Features of the project:
 - [x] Define and implement a communication protocol between Things app and Mobile app
 - [x] Allow to control the motors via Mobile app
 - [x] Allow to control the cradle servos via Mobile app
-- [ ] Try to set PWM form pin 18 to pin 20 changing the config.txt
+- [x] ~~Try to set PWM form pin 18 to pin 20 changing the config.txt~~ (it doesn't work)
 - [ ] Release first alpha version
 - [ ] Create a dev branch and continue the development on that branch
 - [ ] Set Things locale and time format accordingly to Mobile app
