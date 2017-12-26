@@ -37,12 +37,12 @@ Features of the project:
 - [ ] Release first alpha version
 - [ ] Create a dev branch and continue the development on that branch
 - [ ] Set Things locale and time format accordingly to Mobile app
-- [ ] Write Android Things driver for HD44780 LCD controller
+- [x] Write Android Things driver for HD44780 LCD controller
 - [x] Add support for Raspberry Pi Camera
 - [ ] Stream camera to Mobile app
 - [ ] Add support for HC-SR04 (Ultrasonic Module Distance Measuring Transducer Sensor ) to `pwra53a` 
 - [ ] Add support for E18-D80NK (Adjustable Infrared Obstacle Avoidance Detection Sensor) to `pwra53a`
-- [ ] Write Android Things driver for Adafruit LSM9DS1 (Accelerometer, Gyro, Magnetometer and Temperature sensor) 
+- [x] Write Android Things driver for Adafruit LSM9DS1 (Accelerometer, Gyro, Magnetometer and Temperature sensor) 
 - [x] Show CPU usage, CPU temperature and interfaces IP on SH1106
 - [ ] Show current status (stop, moving forward, following path, etc) on HD44780
 - [ ] Use HC-SR04 to avoid collisions
@@ -53,9 +53,10 @@ Features of the project:
 
  - Raspberry Pi 3
  - PWR.A53.A (included in the Kuman SM9 kit)
- - SH1106 OLED Display
  - Android Things 0.6-devpreview or later version
  - Android mobile device to control the car 
+ - SH1106 OLED Display (optional)
+ - LSM9DS1 sensor (optional)
 
 
 ## Build and install
