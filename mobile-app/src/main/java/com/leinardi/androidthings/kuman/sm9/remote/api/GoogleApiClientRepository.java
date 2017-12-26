@@ -199,7 +199,7 @@ public class GoogleApiClientRepository extends BaseRepository {
             @Override
             public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
                 // Provides updates about the progress of both incoming and outgoing payloads
-                Timber.d("onPayloadTransferUpdate status = %s", update.getStatus());
+//                Timber.d("onPayloadTransferUpdate status = %s", update.getStatus());
             }
         });
     }
@@ -208,9 +208,9 @@ public class GoogleApiClientRepository extends BaseRepository {
         Timber.d("onConnectionResult:" + endpointId + ":" + resolution.getStatus());
         if (resolution.getStatus().isSuccess()) {
             Timber.d("Connected successfully");
-            updateConnectionStatus(CONNECTED, R.string.connection_info_connected);
             Nearby.Connections.stopDiscovery(mGoogleApiClient);
             mRemoteHostEndpoint = endpointId;
+            updateConnectionStatus(CONNECTED, R.string.connection_info_connected);
         } else {
             if (resolution.getStatus().getStatusCode() == ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED) {
                 Timber.d("The connection was rejected by one or both sides");
@@ -260,6 +260,7 @@ public class GoogleApiClientRepository extends BaseRepository {
             mConnectionInfo = connectionInfo;
         }
 
+        @ConnectionStatus
         public int getConnectionStatus() {
             return mConnectionStatus;
         }

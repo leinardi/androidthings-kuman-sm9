@@ -17,6 +17,7 @@
 package com.leinardi.androidthings.kuman.sm9.controller;
 
 import android.support.annotation.Nullable;
+import android.text.format.DateUtils;
 
 import com.leinardi.androidthings.driver.pwra53a.PwrA53A;
 import com.leinardi.androidthings.kuman.sm9.api.GoogleApiClientRepository;
@@ -73,6 +74,7 @@ public class CarController implements BaseController {
     }
 
     private void handleThingsMessage(ThingsMessage message) {
+        updatePing(message);
         Timber.d("message = %s", message);
         if (message.getCarMovement() != null) {
             mMotorServoBoardController.moveCar(message.getCarMovement().getAngle(), message.getCarMovement().getPower());
@@ -85,6 +87,14 @@ public class CarController implements BaseController {
             }
             mMotorServoBoardController.moveCamera(horizontalServoAngle, verticalServoAngle);
         }
+    }
+
+    private void updatePing(ThingsMessage message) {
+        int ping = (int) (System.currentTimeMillis() - message.getCreationTime());
+        if (ping > DateUtils.MINUTE_IN_MILLIS) { // if bigger probably the clock of Things and Mobile are not in sync
+            ping = 0;
+        }
+        mOledDisplayController.setPing(ping);
     }
 
     public void close() {

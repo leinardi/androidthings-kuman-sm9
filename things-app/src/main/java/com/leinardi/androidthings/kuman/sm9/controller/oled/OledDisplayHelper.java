@@ -38,6 +38,7 @@ public class OledDisplayHelper {
     private static final int TEXT_SIZE = 8;
     private static final int TEXT_PADDING = 2;
     private static final String[] SPINNER = {"|", "/", "-", "\\", "|", "/", "-", "\\"};
+    private static final int NUMBER_OF_AVG_PINGS = 3;
     private int mSpinnerIndex;
     private Paint mTextPaint;
     private Paint mBackgroundPaint;
@@ -46,6 +47,7 @@ public class OledDisplayHelper {
     private SystemHelper mSystemHelper;
     private SensorDriverController mSensorDriverController;
     private List<String> mNetworkInterfaceAddressList = null;
+    private int mAvgPing;
 
     @Inject
     public OledDisplayHelper(Application application, SystemHelper systemHelper, SensorDriverController sensorDriverController) {
@@ -61,6 +63,14 @@ public class OledDisplayHelper {
         mNetworkInterfaceAddressList = new ArrayList<>(4);
     }
 
+    public void setPing(int ping) {
+        if (mAvgPing == 0) {
+            mAvgPing = ping;
+        } else {
+            mAvgPing = (mAvgPing * (NUMBER_OF_AVG_PINGS - 1) + ping) / NUMBER_OF_AVG_PINGS;
+        }
+    }
+
     public String getTimeText() {
         return mSystemHelper.getTime();
     }
@@ -71,7 +81,15 @@ public class OledDisplayHelper {
         if (roomTemperature != null) {
             tempString = Integer.toString(Math.round(roomTemperature)) + "°C";
         }
-        return String.format(Locale.getDefault(), "Room %s", tempString);
+        return String.format(Locale.getDefault(), "Room %5s", tempString);
+    }
+
+    private String getPingText() {
+        String tempString = "N/A";
+        if (mAvgPing != 0) {
+            tempString = Integer.toString(mAvgPing);
+        }
+        return String.format(Locale.getDefault(), "Ping %5s", tempString);
     }
 
     public String getCpuUsageText() {
@@ -108,6 +126,7 @@ public class OledDisplayHelper {
         updateNetworkInterfaceAddresses();
         mTextPaint.setTextAlign(Paint.Align.RIGHT);
         mCanvas.drawText(getTimeText(), WIDTH - TEXT_PADDING, getLineYCoordinate(1), mTextPaint);
+        mCanvas.drawText(getPingText(), WIDTH - TEXT_PADDING, getLineYCoordinate(2), mTextPaint);
         mCanvas.drawText(getRoomTemperatureText(), WIDTH - TEXT_PADDING, getLineYCoordinate(3), mTextPaint);
         mTextPaint.setTextAlign(Paint.Align.LEFT);
         mCanvas.drawText(getSpinner(), TEXT_PADDING, getLineYCoordinate(1), mTextPaint);

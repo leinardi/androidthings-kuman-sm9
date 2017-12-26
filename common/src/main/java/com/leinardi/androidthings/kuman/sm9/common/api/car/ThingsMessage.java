@@ -26,6 +26,7 @@ public class ThingsMessage implements Serializable {
     private final Boolean mAvoidCollisions;
     private final Boolean mFollowLine;
     private final Boolean mClientDisconnecting;
+    private final long mCreationTime = System.currentTimeMillis();
 
     private ThingsMessage(Builder builder) {
         mCarMovement = builder.mCarMovement;
@@ -59,6 +60,10 @@ public class ThingsMessage implements Serializable {
 
     public Boolean isFollowLine() {
         return mFollowLine;
+    }
+
+    public long getCreationTime() {
+        return mCreationTime;
     }
 
     public static class Builder {
@@ -120,6 +125,7 @@ public class ThingsMessage implements Serializable {
                 ", mAvoidCollisions=" + mAvoidCollisions +
                 ", mFollowLine=" + mFollowLine +
                 ", mClientDisconnecting=" + mClientDisconnecting +
+                ", mCreationTime=" + mCreationTime +
                 '}';
     }
 }

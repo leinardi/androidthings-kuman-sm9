@@ -24,6 +24,8 @@ public abstract class OledDisplayDriverController<D extends AutoCloseable> exten
      */
     public abstract void refreshDisplay();
 
+    public abstract void setPing(int ping);
+
     /**
      * Sets the contrast for the display.
      *

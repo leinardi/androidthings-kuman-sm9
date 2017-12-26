@@ -43,6 +43,11 @@ public class Sh1106OledDisplayDriverController extends OledDisplayDriverControll
     }
 
     @Override
+    public void setPing(int ping) {
+        mOledDisplayHelper.setPing(ping);
+    }
+
+    @Override
     public void setContrast(int level) {
         if (isHardwareAvailable()) {
             try {

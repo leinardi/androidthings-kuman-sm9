@@ -16,6 +16,8 @@
 
 package com.leinardi.androidthings.kuman.sm9.controller;
 
+import android.support.annotation.Nullable;
+
 import com.leinardi.androidthings.driver.pwra53a.PwrA53A;
 import timber.log.Timber;
 
@@ -27,7 +29,9 @@ public class PwrA53AMotorServoBoardDriverController extends MotorServoBoardDrive
     private static final int DEFAULT_HORIZONTAL_ANGLE = 0;
     private static final int POWER_THRESHOLD = 33;
 
-    public PwrA53AMotorServoBoardDriverController() {
+    @Override
+    public void setDriver(@Nullable PwrA53A driver) {
+        super.setDriver(driver);
         moveCamera(DEFAULT_HORIZONTAL_ANGLE, DEFAULT_VERTICAL_ANGLE);
     }
 

@@ -31,9 +31,9 @@ import javax.inject.Inject;
 import java.util.concurrent.TimeUnit;
 
 public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
-    private static final int ANGLE_STEP = 5;
-    private static final int POWER_STEP = 10;
-    private static final int SAMPLE_PERIOD_IN_MILLIS = 500;
+    private static final int ANGLE_STEP = 10;
+    private static final int POWER_STEP = 15;
+    private static final int SAMPLE_PERIOD_IN_MILLIS = 50;
     private final PublishSubject<ThingsMessage> mCarThingsMessagePublishSubject;
     private final PublishSubject<ThingsMessage> mCameraThingsMessagePublishSubject;
     private GoogleApiClientRepository mGoogleApiClientRepository;
@@ -95,7 +95,6 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
             public void onMove(JoyStick joyStick, double angle, double power, int direction) {
                 int steppedAngle = (int) (Math.round(Math.toDegrees(angle) / ANGLE_STEP) * ANGLE_STEP);
                 int steppedPower = (int) (Math.round(power / POWER_STEP) * POWER_STEP);
-
                 if (steppedAngle != mSteppedAngle || steppedPower != mSteppedPower || direction == JoyStick.DIRECTION_CENTER) {
                     Timber.d("angle = %d (%f), power = %d", steppedAngle, angle, steppedPower);
                     ThingsMessage message = new ThingsMessage.Builder().setCarMovement(new CarMovement(steppedAngle, steppedPower)).build();
@@ -107,12 +106,10 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
 
             @Override
             public void onTap() {
-
             }
 
             @Override
             public void onDoubleTap() {
-
             }
         };
     }
