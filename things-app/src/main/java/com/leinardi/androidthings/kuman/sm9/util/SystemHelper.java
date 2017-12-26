@@ -114,7 +114,10 @@ public class SystemHelper {
                 while (inetAddressEnumeration.hasMoreElements()) {
                     InetAddress inetAddress = inetAddressEnumeration.nextElement();
                     if (inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress()) {
-                        networkInterfaceAddressesList.add(String.format("%5s %s", networkInterface.getDisplayName(), inetAddress.getHostAddress()));
+                        networkInterfaceAddressesList.add(
+                                String.format("%5s %s",
+                                        networkInterface.getDisplayName(),
+                                        inetAddress.getHostAddress()));
                     }
                 }
             }

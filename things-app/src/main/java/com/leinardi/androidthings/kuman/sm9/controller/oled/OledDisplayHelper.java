@@ -50,7 +50,9 @@ public class OledDisplayHelper {
     private int mAvgPing;
 
     @Inject
-    public OledDisplayHelper(Application application, SystemHelper systemHelper, SensorDriverController sensorDriverController) {
+    public OledDisplayHelper(Application application,
+                             SystemHelper systemHelper,
+                             SensorDriverController sensorDriverController) {
         mSystemHelper = systemHelper;
         mSensorDriverController = sensorDriverController;
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);

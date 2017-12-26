@@ -49,7 +49,8 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
     @SuppressWarnings("unchecked")
     private void onCreate() {
         if (mViewModel == null) {
-            Class<VM> vmClass = (Class<VM>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+            Class<VM> vmClass =
+                    (Class<VM>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
             mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(vmClass);
             mViewModel.getObservable().addOnPropertyChangedCallback(getOnViewModelPropertyChangedCallback());
         }
@@ -58,12 +59,13 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
     protected abstract void onViewModelPropertyChanged(Observable observable, int propertyId);
 
     @NonNull
-    protected Observable.OnPropertyChangedCallback mOnViewModelPropertyChangedCallback = new Observable.OnPropertyChangedCallback() {
-        @Override
-        public void onPropertyChanged(Observable observable, int propertyId) {
-            onViewModelPropertyChanged(observable, propertyId);
-        }
-    };
+    protected Observable.OnPropertyChangedCallback mOnViewModelPropertyChangedCallback =
+            new Observable.OnPropertyChangedCallback() {
+                @Override
+                public void onPropertyChanged(Observable observable, int propertyId) {
+                    onViewModelPropertyChanged(observable, propertyId);
+                }
+            };
 
     @NonNull
     protected Observable.OnPropertyChangedCallback getOnViewModelPropertyChangedCallback() {

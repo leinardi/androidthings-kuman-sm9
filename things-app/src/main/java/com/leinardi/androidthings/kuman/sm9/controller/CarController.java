@@ -77,7 +77,8 @@ public class CarController implements BaseController {
         updatePing(message);
         Timber.d("message = %s", message);
         if (message.getCarMovement() != null) {
-            mMotorServoBoardController.moveCar(message.getCarMovement().getAngle(), message.getCarMovement().getPower());
+            mMotorServoBoardController.moveCar(message.getCarMovement().getAngle(),
+                    message.getCarMovement().getPower());
         }
         if (message.getCameraCradlePosition() != null) {
             int horizontalServoAngle = message.getCameraCradlePosition().getHorizontalServoAngle();

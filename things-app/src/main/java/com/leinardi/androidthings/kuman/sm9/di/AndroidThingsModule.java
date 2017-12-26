@@ -53,7 +53,8 @@ public class AndroidThingsModule {
 
     @Singleton
     @Provides
-    OledDisplayDriverController provideOledDisplayController(@Nullable Sh1106 sh1106, OledDisplayHelper oledDisplayHelper) {
+    OledDisplayDriverController provideOledDisplayController(@Nullable Sh1106 sh1106,
+                                                             OledDisplayHelper oledDisplayHelper) {
         Sh1106OledDisplayDriverController controller = new Sh1106OledDisplayDriverController(oledDisplayHelper);
         controller.setDriver(sh1106);
         return controller;

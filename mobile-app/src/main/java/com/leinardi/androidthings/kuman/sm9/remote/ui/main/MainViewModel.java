@@ -42,24 +42,25 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
     MainViewModel(GoogleApiClientRepository googleApiClientRepository) {
         mGoogleApiClientRepository = googleApiClientRepository;
 
-        mGoogleApiClientRepository.subscribeToConnectionStatusUpdate(new DisposableObserver<NearbyConnectionsStatusUpdate>() {
+        mGoogleApiClientRepository.subscribeToConnectionStatusUpdate(
+                new DisposableObserver<NearbyConnectionsStatusUpdate>() {
 
-            @Override
-            public void onNext(NearbyConnectionsStatusUpdate payload) {
-                getObservable().setConnectionStatus(payload.getConnectionStatus());
-                getObservable().setConnectionInfo(payload.getConnectionInfo());
-            }
+                    @Override
+                    public void onNext(NearbyConnectionsStatusUpdate payload) {
+                        getObservable().setConnectionStatus(payload.getConnectionStatus());
+                        getObservable().setConnectionInfo(payload.getConnectionInfo());
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                Timber.e(e);
-            }
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                    }
 
-            @Override
-            public void onComplete() {
+                    @Override
+                    public void onComplete() {
 
-            }
-        });
+                    }
+                });
 
         mCarThingsMessagePublishSubject = PublishSubject.create();
         mCarThingsMessagePublishSubject.sample(SAMPLE_PERIOD_IN_MILLIS, TimeUnit.MILLISECONDS)
@@ -95,9 +96,13 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
             public void onMove(JoyStick joyStick, double angle, double power, int direction) {
                 int steppedAngle = (int) (Math.round(Math.toDegrees(angle) / ANGLE_STEP) * ANGLE_STEP);
                 int steppedPower = (int) (Math.round(power / POWER_STEP) * POWER_STEP);
-                if (steppedAngle != mSteppedAngle || steppedPower != mSteppedPower || direction == JoyStick.DIRECTION_CENTER) {
+                if (steppedAngle != mSteppedAngle
+                        || steppedPower != mSteppedPower
+                        || direction == JoyStick.DIRECTION_CENTER) {
                     Timber.d("angle = %d (%f), power = %d", steppedAngle, angle, steppedPower);
-                    ThingsMessage message = new ThingsMessage.Builder().setCarMovement(new CarMovement(steppedAngle, steppedPower)).build();
+                    ThingsMessage message = new ThingsMessage.Builder()
+                            .setCarMovement(new CarMovement(steppedAngle, steppedPower))
+                            .build();
                     mCarThingsMessagePublishSubject.onNext(message);
                     mSteppedAngle = steppedAngle;
                     mSteppedPower = steppedPower;
@@ -122,9 +127,12 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
             @Override
             public void onMove(JoyStick joyStick, double angle, double power, int direction) {
 
-                int verticalAngle = (int) Math.round((Math.sin(angle) * power / 100 * CameraCradlePosition.MAX_ANGLE) / ANGLE_STEP) * ANGLE_STEP;
-                int horizontalAngle = (int) Math.round((Math.cos(angle) * power / 100 * CameraCradlePosition.MAX_ANGLE * -1) / ANGLE_STEP) *
-                        ANGLE_STEP;
+                int verticalAngle =
+                        (int) Math.round((Math.sin(angle) * power / 100 * CameraCradlePosition.MAX_ANGLE)
+                                / ANGLE_STEP) * ANGLE_STEP;
+                int horizontalAngle =
+                        (int) Math.round((Math.cos(angle) * power / 100 * CameraCradlePosition.MAX_ANGLE * -1)
+                                / ANGLE_STEP) * ANGLE_STEP;
                 if (mVerticalAngle != horizontalAngle || mHorizontalAngle != verticalAngle) {
                     Timber.d("verticalAngle = %d, horizontalAngle = %d", verticalAngle, horizontalAngle);
                     ThingsMessage message = new ThingsMessage.Builder().setCameraCradlePosition(

@@ -117,8 +117,12 @@ public class GoogleApiClientRepository extends BaseRepository {
         }
     }
 
-    private void updateConnectionStatus(@ConnectionStatus int connectionStatus, @StringRes int resId, Object... formatArgs) {
-        mConnectionBehaviorPublishSubject.onNext(new NearbyConnectionsStatusUpdate(connectionStatus, mApplication.getString(resId, formatArgs)));
+    private void updateConnectionStatus(@ConnectionStatus int connectionStatus,
+                                        @StringRes int resId,
+                                        Object... formatArgs) {
+        mConnectionBehaviorPublishSubject.onNext(new NearbyConnectionsStatusUpdate(
+                connectionStatus,
+                mApplication.getString(resId, formatArgs)));
     }
 
     public void subscribeToConnectionStatusUpdate(DisposableObserver<NearbyConnectionsStatusUpdate> observer) {
@@ -182,8 +186,9 @@ public class GoogleApiClientRepository extends BaseRepository {
             updateConnectionStatus(CONNECTING, R.string.connection_info_discovering);
         } else {
             Timber.d("Discovery failed: " + status.getStatusMessage() + "(" + status.getStatusCode() + ")");
-            updateConnectionStatus(DISCONNECTED, R.string.connection_info_discovery_failed, status.getStatusCode(), status
-                    .getStatusMessage());
+            updateConnectionStatus(DISCONNECTED, R.string.connection_info_discovery_failed,
+                    status.getStatusCode(),
+                    status.getStatusMessage());
         }
     }
 
@@ -199,7 +204,7 @@ public class GoogleApiClientRepository extends BaseRepository {
             @Override
             public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
                 // Provides updates about the progress of both incoming and outgoing payloads
-//                Timber.d("onPayloadTransferUpdate status = %s", update.getStatus());
+                //                Timber.d("onPayloadTransferUpdate status = %s", update.getStatus());
             }
         });
     }
@@ -215,9 +220,11 @@ public class GoogleApiClientRepository extends BaseRepository {
             if (resolution.getStatus().getStatusCode() == ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED) {
                 Timber.d("The connection was rejected by one or both sides");
             } else {
-                Timber.d("Connection to " + endpointId + " failed. Code: " + resolution.getStatus().getStatusCode());
+                Timber.d("Connection to " + endpointId + " failed. Code: "
+                        + resolution.getStatus().getStatusCode());
             }
-            updateConnectionStatus(DISCONNECTED, R.string.connection_info_discovery_failed, resolution.getStatus().getStatusCode(),
+            updateConnectionStatus(DISCONNECTED, R.string.connection_info_discovery_failed,
+                    resolution.getStatus().getStatusCode(),
                     resolution.getStatus().getStatusMessage());
         }
     }

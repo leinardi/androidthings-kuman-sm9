@@ -94,8 +94,9 @@ public class GoogleApiClientRepository extends BaseRepository {
             Nearby.Connections.stopAdvertising(mGoogleApiClient);
 
             if (!mRemotePeerEndpoints.isEmpty()) {
-                Nearby.Connections.sendPayload(mGoogleApiClient, mRemotePeerEndpoints, Payload.fromBytes("Shutting down host".getBytes(Charset
-                        .forName("UTF-8"))));
+                Nearby.Connections.sendPayload(mGoogleApiClient,
+                        mRemotePeerEndpoints,
+                        Payload.fromBytes("Shutting down host".getBytes(Charset.forName("UTF-8"))));
                 Nearby.Connections.stopAllEndpoints(mGoogleApiClient);
                 mRemotePeerEndpoints.clear();
             }
@@ -105,7 +106,10 @@ public class GoogleApiClientRepository extends BaseRepository {
     }
 
     private void startNearbyConnectionsAdvertising() {
-        Nearby.Connections.startAdvertising(mGoogleApiClient, null, BuildConfig.NEARBY_SERVICE_ID, new ConnectionLifecycleCallback() {
+        Nearby.Connections.startAdvertising(mGoogleApiClient,
+                null,
+                BuildConfig.NEARBY_SERVICE_ID,
+                new ConnectionLifecycleCallback() {
                     @Override
                     public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
                         handleOnConnectionInitiated(endpointId, connectionInfo);
