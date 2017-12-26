@@ -16,6 +16,7 @@
 
 package com.leinardi.androidthings.kuman.sm9.di;
 
+import com.leinardi.androidthings.driver.lsm9ds1.Lsm9ds1;
 import com.leinardi.androidthings.driver.pwra53a.PwrA53A;
 import com.leinardi.androidthings.driver.sh1106.Sh1106;
 import com.leinardi.androidthings.kuman.sm9.ThingsApp;
@@ -23,6 +24,10 @@ import com.leinardi.androidthings.kuman.sm9.common.di.AppInjector;
 import timber.log.Timber;
 
 import java.io.IOException;
+
+import static com.leinardi.androidthings.driver.lsm9ds1.Lsm9ds1.AccelGyroOutputDataRate.ODR_14_9HZ;
+import static com.leinardi.androidthings.driver.lsm9ds1.Lsm9ds1.AccelGyroOutputDataRate.ODR_POWER_DOWN;
+import static com.leinardi.androidthings.driver.lsm9ds1.Lsm9ds1.MagnetometerSystemOperatingMode.MAG_POWER_DOWN;
 
 public class ThingsAppInjector extends AppInjector<ThingsApp> {
     private static final ThingsAppInjector INSTANCE = new ThingsAppInjector();
@@ -51,10 +56,22 @@ public class ThingsAppInjector extends AppInjector<ThingsApp> {
             Timber.e(e);
         }
 
+        Lsm9ds1 lsm9ds1 = null;
+        try {
+            lsm9ds1 = new Lsm9ds1.Builder(RPI3_I2C_BUS_NAME)
+                    .setGyroscopeOdr(ODR_POWER_DOWN)
+                    .setAccelerometerOdr(ODR_14_9HZ)
+                    .setMagnetometerSystemOperatingMode(MAG_POWER_DOWN)
+                    .build();
+        } catch (IOException e) {
+            Timber.e(e);
+        }
+
         DaggerAppComponent.builder()
                 .application(application)
                 .pwra53a(pwrA53A)
                 .sh1106(sh1106)
+                .lsm9ds1(lsm9ds1)
                 .build()
                 .inject(application);
     }

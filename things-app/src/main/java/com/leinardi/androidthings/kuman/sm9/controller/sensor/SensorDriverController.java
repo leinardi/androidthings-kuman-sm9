@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package com.leinardi.androidthings.kuman.sm9.common.ui;
+package com.leinardi.androidthings.kuman.sm9.controller.sensor;
 
-import android.arch.lifecycle.ViewModel;
-import android.databinding.BaseObservable;
+import com.leinardi.androidthings.kuman.sm9.controller.BaseDriverController;
 
-import javax.inject.Inject;
-
-public class BaseViewModel<VMO extends BaseObservable> extends ViewModel {
-    private VMO mObservable;
-
-    public VMO getObservable() {
-        return mObservable;
-    }
-
-    @Inject
-    void setObservable(VMO observable) {
-        mObservable = observable;
-    }
+public abstract class SensorDriverController<D extends AutoCloseable> extends BaseDriverController<D> {
+    public abstract Float getTemperature();
 }

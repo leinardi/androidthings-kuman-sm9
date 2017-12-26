@@ -16,8 +16,8 @@
 
 package com.leinardi.androidthings.kuman.sm9.controller;
 
-public interface MotorServoBoardController extends BaseController {
-    void moveCar(int angle, int power);
+public abstract class MotorServoBoardDriverController<D extends AutoCloseable> extends BaseDriverController<D> {
+    abstract void moveCar(int angle, int power);
 
-    void moveCamera(int horizontalAngle, int verticalAngle);
+    abstract void moveCamera(int horizontalAngle, int verticalAngle);
 }

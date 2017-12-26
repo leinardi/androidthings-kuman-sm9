@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package com.leinardi.androidthings.kuman.sm9.common.ui;
+package com.leinardi.androidthings.kuman.sm9.controller.sensor;
 
-import android.arch.lifecycle.ViewModel;
-import android.databinding.BaseObservable;
+import com.leinardi.androidthings.driver.lsm9ds1.Lsm9ds1;
+import timber.log.Timber;
 
-import javax.inject.Inject;
+import java.io.IOException;
 
-public class BaseViewModel<VMO extends BaseObservable> extends ViewModel {
-    private VMO mObservable;
-
-    public VMO getObservable() {
-        return mObservable;
-    }
-
-    @Inject
-    void setObservable(VMO observable) {
-        mObservable = observable;
+public class Lsm9ds1SensorDriverController extends SensorDriverController<Lsm9ds1> {
+    @Override
+    public Float getTemperature() {
+        if (isHardwareAvailable()) {
+            try {
+                return getDriver().readTemperature();
+            } catch (IOException e) {
+                Timber.e(e);
+            }
+        }
+        return null;
     }
 }

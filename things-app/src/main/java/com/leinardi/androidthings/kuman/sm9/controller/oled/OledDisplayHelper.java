@@ -24,6 +24,7 @@ import android.graphics.Paint;
 import android.support.v4.content.res.ResourcesCompat;
 
 import com.leinardi.androidthings.kuman.sm9.R;
+import com.leinardi.androidthings.kuman.sm9.controller.sensor.SensorDriverController;
 import com.leinardi.androidthings.kuman.sm9.util.SystemHelper;
 
 import javax.inject.Inject;
@@ -42,14 +43,14 @@ public class OledDisplayHelper {
     private Paint mBackgroundPaint;
     private Bitmap mTextAsBitmap;
     private Canvas mCanvas;
-    private Application mApplication;
     private SystemHelper mSystemHelper;
-    private List<String> mNetworkInterfaceAdressList = null;
+    private SensorDriverController mSensorDriverController;
+    private List<String> mNetworkInterfaceAddressList = null;
 
     @Inject
-    public OledDisplayHelper(Application application, SystemHelper systemHelper) {
-        mApplication = application;
+    public OledDisplayHelper(Application application, SystemHelper systemHelper, SensorDriverController sensorDriverController) {
         mSystemHelper = systemHelper;
+        mSensorDriverController = sensorDriverController;
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setTextSize(TEXT_SIZE);
         mTextPaint.setTypeface(ResourcesCompat.getFont(application, R.font.oled_font));
@@ -57,29 +58,38 @@ public class OledDisplayHelper {
         mBackgroundPaint = new Paint();
         mBackgroundPaint.setColor(Color.WHITE);
         mBackgroundPaint.setStyle(Paint.Style.FILL);
-        mNetworkInterfaceAdressList = new ArrayList<>(4);
+        mNetworkInterfaceAddressList = new ArrayList<>(4);
     }
 
     public String getTimeText() {
         return mSystemHelper.getTime();
     }
 
+    private String getRoomTemperatureText() {
+        String tempString = "N/A";
+        Float roomTemperature = mSensorDriverController.getTemperature();
+        if (roomTemperature != null) {
+            tempString = Integer.toString(Math.round(roomTemperature)) + "°C";
+        }
+        return String.format(Locale.getDefault(), "Room %s", tempString);
+    }
+
     public String getCpuUsageText() {
         String usageString = "N/A";
         Integer cpuUsage = mSystemHelper.getCpuUsage();
         if (cpuUsage != null) {
-            usageString = Integer.toString(cpuUsage);
+            usageString = Integer.toString(cpuUsage) + "%";
         }
-        return String.format(Locale.getDefault(), "CPU U %s%%", usageString);
+        return String.format(Locale.getDefault(), "CPU %s", usageString);
     }
 
     public String getCpuTemperatureText() {
         String tempString = "N/A";
         Integer cpuTemp = mSystemHelper.getCpuTemperature();
         if (cpuTemp != null) {
-            tempString = Integer.toString(cpuTemp);
+            tempString = Integer.toString(cpuTemp) + "°C";
         }
-        return String.format(Locale.getDefault(), "CPU T %s°C", tempString);
+        return String.format(Locale.getDefault(), "CPU %s", tempString);
     }
 
     private void clearCanvas() {
@@ -98,12 +108,13 @@ public class OledDisplayHelper {
         updateNetworkInterfaceAddresses();
         mTextPaint.setTextAlign(Paint.Align.RIGHT);
         mCanvas.drawText(getTimeText(), WIDTH - TEXT_PADDING, getLineYCoordinate(1), mTextPaint);
+        mCanvas.drawText(getRoomTemperatureText(), WIDTH - TEXT_PADDING, getLineYCoordinate(3), mTextPaint);
         mTextPaint.setTextAlign(Paint.Align.LEFT);
         mCanvas.drawText(getSpinner(), TEXT_PADDING, getLineYCoordinate(1), mTextPaint);
         mCanvas.drawText(getCpuUsageText(), TEXT_PADDING, getLineYCoordinate(2), mTextPaint);
         mCanvas.drawText(getCpuTemperatureText(), TEXT_PADDING, getLineYCoordinate(3), mTextPaint);
         int i = 5;
-        for (String networkInterface : mNetworkInterfaceAdressList) {
+        for (String networkInterface : mNetworkInterfaceAddressList) {
             mCanvas.drawText(networkInterface, TEXT_PADDING, getLineYCoordinate(i), mTextPaint);
             i++;
         }
@@ -120,8 +131,8 @@ public class OledDisplayHelper {
     }
 
     private void updateNetworkInterfaceAddresses() {
-        if (mNetworkInterfaceAdressList.isEmpty() || mSpinnerIndex % SPINNER.length == 0) {
-            mNetworkInterfaceAdressList = mSystemHelper.getNetworkInterfaceAdresses();
+        if (mNetworkInterfaceAddressList.isEmpty() || mSpinnerIndex % SPINNER.length == 0) {
+            mNetworkInterfaceAddressList = mSystemHelper.getNetworkInterfaceAdresses();
         }
     }
 }

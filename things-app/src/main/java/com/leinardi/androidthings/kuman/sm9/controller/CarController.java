@@ -16,9 +16,12 @@
 
 package com.leinardi.androidthings.kuman.sm9.controller;
 
+import android.support.annotation.Nullable;
+
+import com.leinardi.androidthings.driver.pwra53a.PwrA53A;
 import com.leinardi.androidthings.kuman.sm9.api.GoogleApiClientRepository;
 import com.leinardi.androidthings.kuman.sm9.common.api.car.ThingsMessage;
-import com.leinardi.androidthings.kuman.sm9.controller.oled.OledDisplayController;
+import com.leinardi.androidthings.kuman.sm9.controller.oled.OledDisplayDriverController;
 import io.reactivex.Observable;
 import io.reactivex.observers.DisposableObserver;
 import timber.log.Timber;
@@ -30,13 +33,14 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class CarController implements BaseController {
     private GoogleApiClientRepository mGoogleApiClientRepository;
-    private MotorServoBoardController mMotorServoBoardController;
-    private OledDisplayController mOledDisplayController;
+    private MotorServoBoardDriverController mMotorServoBoardController;
+    private OledDisplayDriverController mOledDisplayController;
 
     @Inject
     public CarController(GoogleApiClientRepository googleApiClientRepository,
-                         MotorServoBoardController motorServoBoardController,
-                         OledDisplayController oledDisplayController) {
+                         MotorServoBoardDriverController motorServoBoardController,
+                         OledDisplayDriverController oledDisplayController,
+                         @Nullable PwrA53A pwrA53A /* used for debug, TODO remove */) {
         mGoogleApiClientRepository = googleApiClientRepository;
         mMotorServoBoardController = motorServoBoardController;
         mOledDisplayController = oledDisplayController;

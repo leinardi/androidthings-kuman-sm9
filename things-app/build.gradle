@@ -72,6 +72,7 @@ dependencies {
     implementation project(':pwra53a')
     compileOnly deps.androidthings
     implementation deps.driver_sh1106
+    implementation deps.driver_lsm9ds1
     implementation deps.support.annotations
     implementation deps.support.app_compat
     implementation deps.lifecycle.runtime
@@ -80,9 +81,9 @@ dependencies {
     implementation deps.timber
     implementation deps.commons_lang3
     // Android Things Developer Preview has no mechanism to update GMS yet.
-    // We use the Play Services version 11.0.0 (bundled in developer preview 5.1)
+    // We use the Play Services version 11.6.0 (bundled in developer preview 6.1)
     //noinspection GradleDependency
-    implementation('com.google.android.gms:play-services-nearby:11.0.4') {
+    implementation('com.google.android.gms:play-services-nearby:11.6.0') {
         exclude group: 'com.android.support', module: 'support-fragment'
     }
 

@@ -18,13 +18,16 @@ package com.leinardi.androidthings.kuman.sm9.di;
 
 import android.support.annotation.Nullable;
 
+import com.leinardi.androidthings.driver.lsm9ds1.Lsm9ds1;
 import com.leinardi.androidthings.driver.pwra53a.PwrA53A;
 import com.leinardi.androidthings.driver.sh1106.Sh1106;
-import com.leinardi.androidthings.kuman.sm9.controller.MotorServoBoardController;
-import com.leinardi.androidthings.kuman.sm9.controller.PwrA53AMotorServoBoardController;
-import com.leinardi.androidthings.kuman.sm9.controller.oled.OledDisplayController;
+import com.leinardi.androidthings.kuman.sm9.controller.MotorServoBoardDriverController;
+import com.leinardi.androidthings.kuman.sm9.controller.PwrA53AMotorServoBoardDriverController;
+import com.leinardi.androidthings.kuman.sm9.controller.oled.OledDisplayDriverController;
 import com.leinardi.androidthings.kuman.sm9.controller.oled.OledDisplayHelper;
-import com.leinardi.androidthings.kuman.sm9.controller.oled.Sh1106OledDisplayController;
+import com.leinardi.androidthings.kuman.sm9.controller.oled.Sh1106OledDisplayDriverController;
+import com.leinardi.androidthings.kuman.sm9.controller.sensor.Lsm9ds1SensorDriverController;
+import com.leinardi.androidthings.kuman.sm9.controller.sensor.SensorDriverController;
 import dagger.Module;
 import dagger.Provides;
 
@@ -34,13 +37,25 @@ import javax.inject.Singleton;
 public class AndroidThingsModule {
     @Singleton
     @Provides
-    MotorServoBoardController provideMotorServoBoardController(@Nullable PwrA53A pwrA53A) {
-        return new PwrA53AMotorServoBoardController(pwrA53A);
+    MotorServoBoardDriverController provideMotorServoBoardController(@Nullable PwrA53A pwrA53A) {
+        PwrA53AMotorServoBoardDriverController controller = new PwrA53AMotorServoBoardDriverController();
+        controller.setDriver(pwrA53A);
+        return controller;
     }
 
     @Singleton
     @Provides
-    OledDisplayController provideOledDisplayController(@Nullable Sh1106 sh1106, OledDisplayHelper oledDisplayHelper) {
-        return new Sh1106OledDisplayController(sh1106, oledDisplayHelper);
+    SensorDriverController provideSensorDriverController(@Nullable Lsm9ds1 lsm9ds1) {
+        Lsm9ds1SensorDriverController controller = new Lsm9ds1SensorDriverController();
+        controller.setDriver(lsm9ds1);
+        return controller;
+    }
+
+    @Singleton
+    @Provides
+    OledDisplayDriverController provideOledDisplayController(@Nullable Sh1106 sh1106, OledDisplayHelper oledDisplayHelper) {
+        Sh1106OledDisplayDriverController controller = new Sh1106OledDisplayDriverController(oledDisplayHelper);
+        controller.setDriver(sh1106);
+        return controller;
     }
 }

@@ -14,22 +14,38 @@
  * limitations under the License.
  */
 
-package com.leinardi.androidthings.kuman.sm9.common.ui;
+package com.leinardi.androidthings.kuman.sm9.controller;
 
-import android.arch.lifecycle.ViewModel;
-import android.databinding.BaseObservable;
+import android.support.annotation.Nullable;
+
+import timber.log.Timber;
 
 import javax.inject.Inject;
 
-public class BaseViewModel<VMO extends BaseObservable> extends ViewModel {
-    private VMO mObservable;
+public abstract class BaseDriverController<D extends AutoCloseable> {
 
-    public VMO getObservable() {
-        return mObservable;
+    private D mDriver;
+
+    public D getDriver() {
+        return mDriver;
     }
 
     @Inject
-    void setObservable(VMO observable) {
-        mObservable = observable;
+    public void setDriver(@Nullable D driver) {
+        mDriver = driver;
+    }
+
+    public boolean isHardwareAvailable() {
+        return mDriver != null;
+    }
+
+    protected void close() {
+        if (isHardwareAvailable()) {
+            try {
+                mDriver.close();
+            } catch (Exception e) {
+                Timber.e(e);
+            }
+        }
     }
 }

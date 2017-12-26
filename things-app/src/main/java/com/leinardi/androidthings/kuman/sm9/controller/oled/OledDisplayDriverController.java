@@ -16,13 +16,13 @@
 
 package com.leinardi.androidthings.kuman.sm9.controller.oled;
 
-import com.leinardi.androidthings.kuman.sm9.controller.BaseController;
+import com.leinardi.androidthings.kuman.sm9.controller.BaseDriverController;
 
-public interface OledDisplayController extends BaseController {
+public abstract class OledDisplayDriverController<D extends AutoCloseable> extends BaseDriverController<D> {
     /**
      * Updates the LCD screen with new data.
      */
-    void refreshDisplay();
+    public abstract void refreshDisplay();
 
     /**
      * Sets the contrast for the display.
@@ -31,7 +31,7 @@ public interface OledDisplayController extends BaseController {
      * @throws IllegalStateException
      * @throws IllegalArgumentException
      */
-    void setContrast(int level);
+    public abstract void setContrast(int level);
 
     /**
      * Invert the display color without rewriting the contents of the display data RAM..
@@ -39,5 +39,5 @@ public interface OledDisplayController extends BaseController {
      * @param invert Set to true to invert the display color; set to false to set the display back to normal.
      * @throws IllegalStateException
      */
-    void invertDisplay(boolean invert);
+    public abstract void invertDisplay(boolean invert);
 }

@@ -16,61 +16,51 @@
 
 package com.leinardi.androidthings.kuman.sm9.controller.oled;
 
-import android.support.annotation.Nullable;
-
 import com.leinardi.androidthings.driver.sh1106.BitmapHelper;
 import com.leinardi.androidthings.driver.sh1106.Sh1106;
 import timber.log.Timber;
 
 import java.io.IOException;
 
-public class Sh1106OledDisplayController implements OledDisplayController {
-    private Sh1106 mSh1106;
+public class Sh1106OledDisplayDriverController extends OledDisplayDriverController<Sh1106> {
     private OledDisplayHelper mOledDisplayHelper;
 
-    public Sh1106OledDisplayController(@Nullable Sh1106 sh1106, OledDisplayHelper oledDisplayHelper) {
+    public Sh1106OledDisplayDriverController(OledDisplayHelper oledDisplayHelper) {
         mOledDisplayHelper = oledDisplayHelper;
-        if (sh1106 == null) {
-            throw new IllegalStateException("Unable to get the instance of Sh1106");
-        }
-        mSh1106 = sh1106;
     }
 
     @Override
     public void refreshDisplay() {
-        try {
-            mSh1106.clearPixels();
-            BitmapHelper.setBmpData(mSh1106, 0, 0, mOledDisplayHelper.getDisplayBitmap(), false);
-            mSh1106.show(); // render the pixel data
-        } catch (IOException e) {
-            Timber.e(e);
+        if (isHardwareAvailable()) {
+            try {
+                getDriver().clearPixels();
+                BitmapHelper.setBmpData(getDriver(), 0, 0, mOledDisplayHelper.getDisplayBitmap(), false);
+                getDriver().show(); // render the pixel data
+            } catch (IOException e) {
+                Timber.e(e);
+            }
         }
     }
 
     @Override
     public void setContrast(int level) {
-        try {
-            mSh1106.setContrast(level);
-        } catch (IOException e) {
-            Timber.e(e);
+        if (isHardwareAvailable()) {
+            try {
+                getDriver().setContrast(level);
+            } catch (IOException e) {
+                Timber.e(e);
+            }
         }
     }
 
     @Override
     public void invertDisplay(boolean invert) {
-        try {
-            mSh1106.setInvertDisplay(invert);
-        } catch (IOException e) {
-            Timber.e(e);
-        }
-    }
-
-    @Override
-    public void close() {
-        try {
-            mSh1106.close();
-        } catch (IOException e) {
-            Timber.e(e);
+        if (isHardwareAvailable()) {
+            try {
+                getDriver().setInvertDisplay(invert);
+            } catch (IOException e) {
+                Timber.e(e);
+            }
         }
     }
 }

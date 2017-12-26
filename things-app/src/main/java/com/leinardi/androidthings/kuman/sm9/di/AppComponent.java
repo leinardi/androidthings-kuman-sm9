@@ -19,6 +19,7 @@ package com.leinardi.androidthings.kuman.sm9.di;
 import android.app.Application;
 import android.support.annotation.Nullable;
 
+import com.leinardi.androidthings.driver.lsm9ds1.Lsm9ds1;
 import com.leinardi.androidthings.driver.pwra53a.PwrA53A;
 import com.leinardi.androidthings.driver.sh1106.Sh1106;
 import com.leinardi.androidthings.kuman.sm9.ThingsApp;
@@ -48,6 +49,9 @@ public interface AppComponent {
 
         @BindsInstance
         Builder sh1106(@Nullable Sh1106 sh1106);
+
+        @BindsInstance
+        Builder lsm9ds1(@Nullable Lsm9ds1 lsm9ds1);
 
         AppComponent build();
     }
