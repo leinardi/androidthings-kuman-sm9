@@ -34,6 +34,7 @@ Features of the project:
 - [x] Allow to control the motors via Mobile app
 - [x] Allow to control the cradle servos via Mobile app
 - [x] ~~Try to set PWM form pin 18 to pin 20 changing the config.txt~~ (it doesn't work)
+- [ ] Implement software PWM to control the DC motors
 - [ ] Release first alpha version
 - [ ] Create a dev branch and continue the development on that branch
 - [ ] Set Things locale and time format accordingly to Mobile app
@@ -44,6 +45,7 @@ Features of the project:
 - [ ] Add support for E18-D80NK (Adjustable Infrared Obstacle Avoidance Detection Sensor) to `pwra53a`
 - [x] Write Android Things driver for Adafruit LSM9DS1 (Accelerometer, Gyro, Magnetometer and Temperature sensor) 
 - [x] Show CPU usage, CPU temperature and interfaces IP on SH1106
+- [x] Show room temperature and Mobile-Things ping on SH1106
 - [ ] Show current status (stop, moving forward, following path, etc) on HD44780
 - [ ] Use HC-SR04 to avoid collisions
 - [ ] Use E18-D80NK to implement follow path
