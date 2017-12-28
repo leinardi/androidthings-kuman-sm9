@@ -48,7 +48,7 @@ public class SoftPwm extends Pwm {
     public SoftPwm() {
     }
 
-    public void openGpio(String gpioName) throws IOException {
+    public void openSoftPwm(String gpioName) throws IOException {
         PeripheralManagerService manager = new PeripheralManagerService();
         mGpio = manager.openGpio(gpioName);
         mGpio.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
@@ -137,6 +137,10 @@ public class SoftPwm extends Pwm {
      */
     @Override
     public void setPwmDutyCycle(double dutyCycle) {
+        if (dutyCycle < 0 || dutyCycle > 100) {
+            throw new IllegalArgumentException("Invalid duty cycle value (must be between 0 and 100 included). "
+                    + "Duty cycle:" + dutyCycle);
+        }
         mDutyCycle = dutyCycle;
         mPeriodHighNs = (int) Math.round(mPeriodTotal / 100f * dutyCycle);
         mPeriodLowNs = (int) (mPeriodTotal - mPeriodHighNs);
@@ -162,8 +166,9 @@ public class SoftPwm extends Pwm {
      */
     @Override
     public void setPwmFrequencyHz(double freqHz) {
-        if (freqHz > MAX_FREQ) {
-            throw new IllegalArgumentException("Max freq is " + MAX_FREQ + "Hz. Freq:" + freqHz);
+        if (freqHz < 0 || freqHz > MAX_FREQ) {
+            throw new IllegalArgumentException("Invalid frequency value (must be between 0 and " + MAX_FREQ
+                    + "Hz included). Freq:" + freqHz);
         }
         mFreq = freqHz;
         mPeriodTotal = Math.round(HZ_IN_NANOSECONDS / freqHz);

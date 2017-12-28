@@ -243,7 +243,7 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
 
     public void onMoveStopClicked() {
         try {
-            mPwrA53A.motorStop();
+            mPwrA53A.motorsStop();
         } catch (IOException e) {
             Timber.e(e);
         }
@@ -251,7 +251,7 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
 
     public void onMoveForwardClicked() {
         try {
-            mPwrA53A.motorForward();
+            mPwrA53A.motorsForward(100);
         } catch (IOException e) {
             Timber.e(e);
         }
@@ -259,7 +259,7 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
 
     public void onMoveBackwardClicked() {
         try {
-            mPwrA53A.motorBackward();
+            mPwrA53A.motorsBackward(100);
         } catch (IOException e) {
             Timber.e(e);
         }
@@ -267,7 +267,7 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
 
     public void onMoveLeftClicked() {
         try {
-            mPwrA53A.motorTurnLeft();
+            mPwrA53A.motorsTurnLeft(100);
         } catch (IOException e) {
             Timber.e(e);
         }
@@ -275,7 +275,7 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
 
     public void onMoveRightClicked() {
         try {
-            mPwrA53A.motorTurnRight();
+            mPwrA53A.motorsTurnRight(100);
         } catch (IOException e) {
             Timber.e(e);
         }

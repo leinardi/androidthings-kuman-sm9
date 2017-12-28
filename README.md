@@ -34,7 +34,8 @@ Features of the project:
 - [x] Allow to control the motors via Mobile app
 - [x] Allow to control the cradle servos via Mobile app
 - [x] ~~Try to set PWM form pin 18 to pin 20 changing the config.txt~~ (it doesn't work)
-- [ ] Implement software PWM to control the DC motors
+- [x] Implement software PWM to control the DC motors
+- [ ] Move software PWM to separate repository
 - [ ] Release first alpha version
 - [ ] Create a dev branch and continue the development on that branch
 - [ ] Set Things locale and time format accordingly to Mobile app

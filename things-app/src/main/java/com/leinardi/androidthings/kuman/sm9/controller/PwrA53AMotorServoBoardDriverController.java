@@ -39,19 +39,7 @@ public class PwrA53AMotorServoBoardDriverController extends MotorServoBoardDrive
     public void moveCar(int angle, int power) {
         if (isHardwareAvailable()) {
             try {
-                if (power == 0) {
-                    getDriver().motorStop();
-                } else if (power >= POWER_THRESHOLD) {
-                    if (angle >= -45 && angle < 45) {
-                        getDriver().motorTurnLeft();
-                    } else if (angle >= 45 && angle < 135) {
-                        getDriver().motorForward();
-                    } else if ((angle >= 135 && angle <= 180) || (angle >= -180 && angle < -135)) {
-                        getDriver().motorTurnRight();
-                    } else if (angle >= -135 && angle < -45) {
-                        getDriver().motorBackward();
-                    }
-                }
+                getDriver().motorsMoveToDirection(angle, power);
             } catch (IOException e) {
                 Timber.e(e);
             }

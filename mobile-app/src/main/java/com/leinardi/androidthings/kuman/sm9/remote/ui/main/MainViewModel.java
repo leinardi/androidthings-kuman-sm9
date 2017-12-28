@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
     private static final int ANGLE_STEP = 10;
-    private static final int POWER_STEP = 15;
+    private static final int POWER_STEP = 20;
     private static final int SAMPLE_PERIOD_IN_MILLIS = 50;
     private final PublishSubject<ThingsMessage> mCarThingsMessagePublishSubject;
     private final PublishSubject<ThingsMessage> mCameraThingsMessagePublishSubject;
@@ -126,7 +126,6 @@ public class MainViewModel extends BaseViewModel<MainViewModelObservable> {
 
             @Override
             public void onMove(JoyStick joyStick, double angle, double power, int direction) {
-
                 int verticalAngle =
                         (int) Math.round((Math.sin(angle) * power / 100 * CameraCradlePosition.MAX_ANGLE)
                                 / ANGLE_STEP) * ANGLE_STEP;

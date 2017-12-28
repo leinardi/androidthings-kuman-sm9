@@ -22,6 +22,7 @@ import com.google.android.things.pio.Gpio;
 import com.google.android.things.pio.I2cDevice;
 import com.google.android.things.pio.PeripheralManagerService;
 import com.google.android.things.pio.Pwm;
+import com.leinardi.androidthings.pio.SoftPwm;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -29,9 +30,9 @@ import java.util.Map;
 
 public class PwrA53A implements AutoCloseable {
     private static final String TAG = PwrA53A.class.getSimpleName();
-    private static final int THROTTLE_MIN = 0;
-    private static final int THROTTLE_MAX = 100;
-    private static final int PWM_FREQUENCY_HZ = 1000;
+    private static final int POWER_MIN = 0;
+    private static final int POWER_MAX = 100;
+    private static final int PWM_FREQUENCY = 100;
     private final String mI2cName;
     /**
      * Default I2C address for the sensor.
@@ -93,6 +94,8 @@ public class PwrA53A implements AutoCloseable {
     private I2cDevice mI2cDevice;
     private Pwm mPwmEnA;
     private Pwm mPwmEnB;
+    private SoftPwm mPwmSwEnA;
+    private SoftPwm mPwmSwEnB;
     private final Map<String, Gpio> mGpioMap;
     private boolean mUsePwm;
 
@@ -137,8 +140,10 @@ public class PwrA53A implements AutoCloseable {
         mUsePwm = tryToOpenPwm(pioService);
 
         if (!mUsePwm) {
-            mGpioMap.put(PWR_A53_A_ENA_GPIO, pioService.openGpio(PWR_A53_A_ENA_GPIO));
-            mGpioMap.put(PWR_A53_A_ENB_GPIO, pioService.openGpio(PWR_A53_A_ENB_GPIO));
+            mPwmSwEnA = new SoftPwm();
+            mPwmSwEnA.openSoftPwm(PWR_A53_A_ENA_GPIO);
+            mPwmSwEnB = new SoftPwm();
+            mPwmSwEnB.openSoftPwm(PWR_A53_A_ENB_GPIO);
         }
         mGpioMap.put(PWR_A53_A_IN1, pioService.openGpio(PWR_A53_A_IN1));
         mGpioMap.put(PWR_A53_A_IN2, pioService.openGpio(PWR_A53_A_IN2));
@@ -151,11 +156,13 @@ public class PwrA53A implements AutoCloseable {
         getGpio(PWR_A53_A_LED2).setDirection(Gpio.DIRECTION_OUT_INITIALLY_HIGH);
 
         if (!mUsePwm) {
-            getGpio(PWR_A53_A_ENA_GPIO).setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
-            getGpio(PWR_A53_A_ENB_GPIO).setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
+            mPwmSwEnA.setPwmFrequencyHz(PWM_FREQUENCY);
+            mPwmSwEnB.setPwmFrequencyHz(PWM_FREQUENCY);
+            setPwmThrottle(mPwmSwEnA, 0);
+            setPwmThrottle(mPwmSwEnB, 0);
         } else {
-            mPwmEnA.setPwmFrequencyHz(PWM_FREQUENCY_HZ);
-            mPwmEnB.setPwmFrequencyHz(PWM_FREQUENCY_HZ);
+            mPwmEnA.setPwmFrequencyHz(PWM_FREQUENCY);
+            mPwmEnB.setPwmFrequencyHz(PWM_FREQUENCY);
             setPwmThrottle(mPwmEnA, 0);
             setPwmThrottle(mPwmEnB, 0);
         }
@@ -193,7 +200,7 @@ public class PwrA53A implements AutoCloseable {
             mPwmEnA = pioService.openPwm(PWR_A53_A_ENA_PWM);
             return true;
         } catch (IOException e) {
-            Log.e(TAG, "Unable to open PWMs, falling back to GPIO", e);
+            Log.e(TAG, "Unable to open PWMs, falling back to SoftPwm", e);
             try {
                 if (mPwmEnA != null) {
                     mPwmEnA.close();
@@ -209,7 +216,7 @@ public class PwrA53A implements AutoCloseable {
     }
 
     private void setPwmThrottle(Pwm pwm, int throttle) throws IOException {
-        if (throttle < THROTTLE_MIN || throttle > THROTTLE_MAX) {
+        if (throttle < POWER_MIN || throttle > POWER_MAX) {
             throw new IllegalArgumentException("Throttle must be between 0 and 100. Throttle: " + throttle);
         }
         if (pwm == null) {
@@ -287,89 +294,100 @@ public class PwrA53A implements AutoCloseable {
         getGpio(ledGpioName).setValue(value);
     }
 
-    public void motorForward() throws IOException, IllegalStateException {
-        Log.d(TAG, "Motor Forward");
-        if (mUsePwm) {
-            setPwmThrottle(mPwmEnA, THROTTLE_MAX);
-            setPwmThrottle(mPwmEnB, THROTTLE_MAX);
-        } else {
-            getGpio(PWR_A53_A_ENA_GPIO).setValue(true);
-            getGpio(PWR_A53_A_ENB_GPIO).setValue(true);
-        }
-        getGpio(PWR_A53_A_IN1).setValue(true);
-        getGpio(PWR_A53_A_IN2).setValue(false);
-        getGpio(PWR_A53_A_IN3).setValue(true);
-        getGpio(PWR_A53_A_IN4).setValue(false);
-        getGpio(PWR_A53_A_LED1).setValue(false);
-        getGpio(PWR_A53_A_LED2).setValue(false);
+    public void motorsForward(int power) throws IOException, IllegalStateException {
+        setThrottleMotors(power, power);
     }
 
-    public void motorBackward() throws IOException, IllegalStateException {
-        Log.d(TAG, "Motor Backward");
-        if (mUsePwm) {
-            setPwmThrottle(mPwmEnA, THROTTLE_MAX);
-            setPwmThrottle(mPwmEnB, THROTTLE_MAX);
-        } else {
-            getGpio(PWR_A53_A_ENA_GPIO).setValue(true);
-            getGpio(PWR_A53_A_ENB_GPIO).setValue(true);
-        }
-        getGpio(PWR_A53_A_IN1).setValue(false);
-        getGpio(PWR_A53_A_IN2).setValue(true);
-        getGpio(PWR_A53_A_IN3).setValue(false);
-        getGpio(PWR_A53_A_IN4).setValue(true);
-        getGpio(PWR_A53_A_LED1).setValue(true);
-        getGpio(PWR_A53_A_LED2).setValue(false);
+    public void motorsBackward(int power) throws IOException, IllegalStateException {
+        setThrottleMotors(-power, -power);
     }
 
-    public void motorTurnLeft() throws IOException, IllegalStateException {
-        Log.d(TAG, "Motor Turn Left");
-        if (mUsePwm) {
-            setPwmThrottle(mPwmEnA, THROTTLE_MAX);
-            setPwmThrottle(mPwmEnB, THROTTLE_MAX);
-        } else {
-            getGpio(PWR_A53_A_ENA_GPIO).setValue(true);
-            getGpio(PWR_A53_A_ENB_GPIO).setValue(true);
-        }
-        getGpio(PWR_A53_A_IN1).setValue(true);
-        getGpio(PWR_A53_A_IN2).setValue(false);
-        getGpio(PWR_A53_A_IN3).setValue(false);
-        getGpio(PWR_A53_A_IN4).setValue(true);
-        getGpio(PWR_A53_A_LED1).setValue(false);
-        getGpio(PWR_A53_A_LED2).setValue(true);
+    public void motorsTurnLeft(int power) throws IOException, IllegalStateException {
+        setThrottleMotors(power, -power);
     }
 
-    public void motorTurnRight() throws IOException, IllegalStateException {
-        Log.d(TAG, "Motor Turn Right");
-        if (mUsePwm) {
-            setPwmThrottle(mPwmEnA, THROTTLE_MAX);
-            setPwmThrottle(mPwmEnB, THROTTLE_MAX);
-        } else {
-            getGpio(PWR_A53_A_ENA_GPIO).setValue(true);
-            getGpio(PWR_A53_A_ENB_GPIO).setValue(true);
-        }
-        getGpio(PWR_A53_A_IN1).setValue(false);
-        getGpio(PWR_A53_A_IN2).setValue(true);
-        getGpio(PWR_A53_A_IN3).setValue(true);
-        getGpio(PWR_A53_A_IN4).setValue(false);
-        getGpio(PWR_A53_A_LED1).setValue(false);
-        getGpio(PWR_A53_A_LED2).setValue(true);
+    public void motorsTurnRight(int power) throws IOException, IllegalStateException {
+        setThrottleMotors(-power, power);
     }
 
-    public void motorStop() throws IOException, IllegalStateException {
-        Log.d(TAG, "Motor Stop");
-        if (mUsePwm) {
-            setPwmThrottle(mPwmEnA, THROTTLE_MIN);
-            setPwmThrottle(mPwmEnB, THROTTLE_MIN);
-        } else {
-            getGpio(PWR_A53_A_ENA_GPIO).setValue(false);
-            getGpio(PWR_A53_A_ENB_GPIO).setValue(false);
+    public void motorsStop() throws IOException, IllegalStateException {
+        setThrottleMotors(POWER_MIN, POWER_MIN);
+    }
+
+    public void setThrottleMotor1(int throttle) throws IOException {
+        boolean moveForward = throttle >= 0;
+        boolean shouldStop = throttle == 0;
+        if (!moveForward) {
+            throttle = -throttle;
         }
-        getGpio(PWR_A53_A_IN1).setValue(false);
-        getGpio(PWR_A53_A_IN2).setValue(false);
-        getGpio(PWR_A53_A_IN3).setValue(false);
-        getGpio(PWR_A53_A_IN4).setValue(false);
-        getGpio(PWR_A53_A_LED1).setValue(true);
-        getGpio(PWR_A53_A_LED2).setValue(true);
+        if (mUsePwm) {
+            setPwmThrottle(mPwmEnA, throttle);
+        } else {
+            setPwmThrottle(mPwmSwEnA, throttle);
+        }
+        getGpio(PWR_A53_A_IN1).setValue(moveForward && !shouldStop);
+        getGpio(PWR_A53_A_IN2).setValue(!moveForward);
+    }
+
+    public void setThrottleMotor2(int throttle) throws IOException {
+        boolean moveForward = throttle >= 0;
+        boolean shouldStop = throttle == 0;
+        if (!moveForward) {
+            throttle = -throttle;
+        }
+        if (mUsePwm) {
+            setPwmThrottle(mPwmEnB, throttle);
+        } else {
+            setPwmThrottle(mPwmSwEnB, throttle);
+        }
+        getGpio(PWR_A53_A_IN3).setValue(moveForward && !shouldStop);
+        getGpio(PWR_A53_A_IN4).setValue(!moveForward);
+    }
+
+    public void setThrottleMotors(int throttleMotor1, int throttleMotor2) throws IOException {
+        Log.d(TAG, "throttleMotor1 = " + throttleMotor1);
+        Log.d(TAG, "throttleMotor2 = " + throttleMotor2);
+        setThrottleMotor1(throttleMotor1);
+        setThrottleMotor2(throttleMotor2);
+    }
+
+    public void motorsMoveToDirection(int angle, int power) throws IOException {
+        int throttleMotor1 = 0;
+        int throttleMotor2 = 0;
+        if (power != 0) {
+            if (angle >= 150 && angle < 180) {
+                throttleMotor1 = Math.round(scaleValue(angle, 150, 180, POWER_MIN, -POWER_MAX));
+                throttleMotor2 = Math.round(scaleValue(angle, 150, 180, POWER_MAX, POWER_MAX));
+            } else if (angle >= 90 && angle < 150) {
+                throttleMotor1 = Math.round(scaleValue(angle, 90, 150, POWER_MAX, POWER_MIN));
+                throttleMotor2 = Math.round(scaleValue(angle, 90, 150, POWER_MAX, POWER_MAX));
+            } else if (angle >= 30 && angle < 90) {
+                throttleMotor1 = Math.round(scaleValue(angle, 30, 90, POWER_MAX, POWER_MAX));
+                throttleMotor2 = Math.round(scaleValue(angle, 30, 90, POWER_MIN, POWER_MAX));
+            } else if (angle >= 0 && angle < 30) {
+                throttleMotor1 = Math.round(scaleValue(angle, 0, 30, POWER_MAX, POWER_MAX));
+                throttleMotor2 = Math.round(scaleValue(angle, 0, 30, -POWER_MAX, POWER_MIN));
+            } else if (angle < 0 && angle >= -30) {
+                throttleMotor1 = Math.round(scaleValue(angle, 0, -30, POWER_MAX, -POWER_MAX));
+                throttleMotor2 = Math.round(scaleValue(angle, 0, -30, -POWER_MAX, POWER_MIN));
+            } else if (angle < -30 && angle >= -90) {
+                throttleMotor1 = Math.round(scaleValue(angle, -30, -90, -POWER_MAX, -POWER_MAX));
+                throttleMotor2 = Math.round(scaleValue(angle, -30, -90, POWER_MIN, -POWER_MAX));
+            } else if (angle < -90 && angle >= -150) {
+                throttleMotor1 = Math.round(scaleValue(angle, -90, -150, -POWER_MAX, POWER_MIN));
+                throttleMotor2 = Math.round(scaleValue(angle, -90, -150, -POWER_MAX, -POWER_MAX));
+            } else if (angle < -150 && angle >= -180) {
+                throttleMotor1 = Math.round(scaleValue(angle, -150, -180, POWER_MIN, -POWER_MAX));
+                throttleMotor2 = Math.round(scaleValue(angle, -150, -180, -POWER_MAX, POWER_MAX));
+            }
+            throttleMotor1 = Math.round(throttleMotor1 / 100f * power);
+            throttleMotor2 = Math.round(throttleMotor2 / 100f * power);
+        }
+        setThrottleMotors(throttleMotor1, throttleMotor2);
+    }
+
+    private float scaleValue(float x, float oldStartRange, float oldEndRange, float newStartRange, float newEndRange) {
+        return (((newEndRange - newStartRange) * (x - oldStartRange)) / (oldEndRange - oldStartRange)) + newStartRange;
     }
 
     private I2cDevice getI2cDevice() throws IllegalStateException {
