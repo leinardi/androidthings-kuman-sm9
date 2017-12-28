@@ -23,7 +23,7 @@ Features of the project:
 - [x] Create projects modules and add common frameworks/libraries/tools (Dagger, Rx, MVVM, checkstyle, etc)
 - [x] Write Android Things driver for PWR.A53.A (motors, servos and led control via I2C and GPIO)
 - [x] Establish a connection between Things app and Mobile app using Google Nearby API
-- [x] Adapt Android Things driver for SSD1306 to work with the SH1106
+- [x] Adapt Android Things [driver for SSD1306 to work with the SH1106](https://github.com/leinardi/androidthings-drivers)
 - [x] Add TravisCI integration with Github
 - [x] Add project checkstyle and code style configuration
 - [x] Add license profile IDEA configuration
@@ -39,12 +39,12 @@ Features of the project:
 - [ ] Release first alpha version
 - [ ] Create a dev branch and continue the development on that branch
 - [ ] Set Things locale and time format accordingly to Mobile app
-- [x] Write Android Things driver for HD44780 LCD controller
+- [x] Write Android Things [driver for HD44780](https://github.com/leinardi/androidthings-drivers) LCD controller
 - [x] Add support for Raspberry Pi Camera
 - [ ] Stream camera to Mobile app
 - [ ] Add support for HC-SR04 (Ultrasonic Module Distance Measuring Transducer Sensor ) to `pwra53a` 
 - [ ] Add support for E18-D80NK (Adjustable Infrared Obstacle Avoidance Detection Sensor) to `pwra53a`
-- [x] Write Android Things driver for Adafruit LSM9DS1 (Accelerometer, Gyro, Magnetometer and Temperature sensor) 
+- [x] Write Android Things [driver for LSM9DS1](https://github.com/leinardi/androidthings-drivers) (Accelerometer, Gyro, Magnetometer and Temperature sensor) 
 - [x] Show CPU usage, CPU temperature and interfaces IP on SH1106
 - [x] Show room temperature and Mobile-Things ping on SH1106
 - [ ] Show current status (stop, moving forward, following path, etc) on HD44780
