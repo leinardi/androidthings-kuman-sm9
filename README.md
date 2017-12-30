@@ -42,6 +42,8 @@ Features of the project:
 - [x] Write Android Things [driver for HD44780](https://github.com/leinardi/androidthings-drivers) LCD controller
 - [x] Add support for Raspberry Pi Camera
 - [ ] Stream camera to Mobile app
+- [ ] Write Android Things [driver for DS3231](https://github.com/leinardi/androidthings-drivers)
+- [ ] Sync Things clock with DS3231.
 - [ ] Add support for HC-SR04 (Ultrasonic Module Distance Measuring Transducer Sensor ) to `pwra53a` 
 - [ ] Add support for E18-D80NK (Adjustable Infrared Obstacle Avoidance Detection Sensor) to `pwra53a`
 - [x] Write Android Things [driver for LSM9DS1](https://github.com/leinardi/androidthings-drivers) (Accelerometer, Gyro, Magnetometer and Temperature sensor) 
